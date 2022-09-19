@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zfkj.demo.dao.mapper.AuthMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zfkj.demo.dao.entity.Auth">
+        <result column="id" property="id" />
+        <result column="parent_id" property="parentId" />
+        <result column="level" property="level" />
+        <result column="name" property="name" />
+        <result column="url" property="url" />
+        <result column="type" property="type" />
+        <result column="identification" property="identification" />
+        <result column="for_system" property="forSystem" />
+        <result column="sort" property="sort" />
+        <result column="request_method" property="requestMethod" />
+        <result column="icon" property="icon" />
+        <result column="create_id" property="createId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_id" property="updateId" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        parent_id, level, name, url, type, identification, for_system, sort, request_method, icon, create_id, create_time, update_id, update_time
+    </sql>
+
+</mapper>

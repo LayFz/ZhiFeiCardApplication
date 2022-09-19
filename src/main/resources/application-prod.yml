@@ -1,0 +1,103 @@
+server:
+  port: ${PORT:9002} #设置服务端口
+
+spring:
+  application:
+    name: scaffold_service
+  servlet:
+    multipart:
+      max-file-size: 300MB
+      max-request-size: 300MB
+  #数据库配-
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://120.24.221.143:3306/zhifei_wisdom_campus?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+      username: root
+      password: Mdzz13790.
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      #Oracle需要打开注释
+      #validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        #login-username: job
+        #login-password: job
+      filter:
+        stat:
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: false
+        wall:
+          config:
+            multi-statement-allow: true
+  #配置Json日期格式
+  jackson:
+    default-property-inclusion: ALWAYS
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  #Redis配置
+  redis:
+    host: 124.70.150.250
+    port: 6379
+    password: zhifei@2021
+    timeout: 10000
+    database: 1
+    jedis:
+      pool:
+        max-wait: -1
+        max-idle: 8
+        max-active: 40
+        min-idle: 0
+#Mybatis-plus配置
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.zfkj.demo.dao.entity  #此处指定数据表实体包路径
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-value: YES #逻辑删除标识，已删除
+      logic-not-delete-value: NO #逻辑删除标识，未删除
+
+# 文件通用路径配置
+filesave:
+  windows: G:\rcl\
+  linux: /zhifei/project/materials-experiment/materials-experiment-service/upload/
+  upload-head: http://124.70.150.250:9001
+
+ignore:
+  # 白名单，不需要登录即可访问
+  urls:
+    - /api/user/register
+    - /api/user/getboard
+    - /api/manager/getCode
+    - /api/manager/login
+    - /doc.html
+    - /webjars/**
+    - /favicon.ico
+    - /error
+    - /v3/api-docs
+    - /swagger-*/**
+    - /api/manager/file/uploadImg
+    - /api/manager/file/uploadFile
+    - /download/**
+    - /upload/img/**
+    - /upload/file/**
+    - /excel/**
+  # 白名单，需要登录，但不需要分配权限即可访问
+  tokenurls:
+    - /api/user/saveboard
+    - /api/manager/logout
+    - /api/manager/user/getUserMenus

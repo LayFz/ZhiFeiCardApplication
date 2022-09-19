@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zfkj.demo.dao.mapper.BaseDictMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zfkj.demo.dao.entity.BaseDict">
+        <result column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="code" property="code"/>
+        <result column="sort" property="sort"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        ,
+        parent_id, code, dict_key, dict_value, sort, remark, is_sealed, is_deleted, create_time, create_user, update_time, update_user
+    </sql>
+    <select id="getDictList" resultType="com.zfkj.demo.vo.respvo.dict.BaseDictRespVO">
+        SELECT
+               sbd.*,suc.name createUser,suu.name updateUser
+        FROM
+             sys_base_dict sbd
+            left join sys_user suc on sbd.create_id = suc.id
+            left join sys_user suu on sbd.update_id = suu.id
+        <where>
+            and sbd.del_flag = 'NO'
+            <if test="req.name != null and req.name != ''">
+                and sbd.`name` like concat('%',#{req.name},'%')
+            </if>
+            <choose>
+                <when test="req.parentId != null and req.parentId != ''">
+                    and sbd.parent_id = #{req.parentId}
+                </when>
+                <otherwise>
+                    and sbd.parent_id = 0
+                </otherwise>
+            </choose>
+        </where>
+        order by sbd.sort asc
+    </select>
+    <select id="getDictCode" resultType="com.zfkj.demo.vo.respvo.dict.BaseDictRespVO">
+        SELECT * FROM sys_base_dict
+        where `code` = #{reqVo.code} and parent_id is not null and is_deleted = 'NO'
+        order by `code`,sort
+    </select>
+
+</mapper>

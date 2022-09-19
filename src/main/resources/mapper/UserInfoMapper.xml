@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zfkj.demo.dao.mapper.UserInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zfkj.demo.dao.entity.User">
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="account" property="account" />
+        <result column="phone" property="phone" />
+        <result column="password" property="password" />
+        <result column="age" property="age" />
+        <result column="sex" property="sex" />
+        <result column="remark" property="remark" />
+        <result column="status" property="status" />
+        <result column="create_id" property="createId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_id" property="updateId" />
+        <result column="update_time" property="updateTime" />
+        <result column="address" property="address" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        name, account, phone, password, age, sex, remark, status, create_id, create_time, update_id, update_time, address
+    </sql>
+
+    <select id="queryUser" resultType="com.zfkj.demo.vo.respvo.user.QueryUserRespVo">
+        select <include refid="Base_Column_List"/> from sys_user
+        where del_flag = 'NO'
+        <if test="reqVo.name != null and reqVo.name != ''">
+            and `name` like concat('%',#{reqVo.name},'%')
+        </if>
+        <if test="reqVo.phone != null and reqVo.phone != ''">
+            and phone like concat('%',#{reqVo.phone},'%')
+        </if>
+        <if test="reqVo.account != null and reqVo.account != ''">
+            and account like concat('%',#{reqVo.account},'%')
+        </if>
+        <if test="reqVo.address != null and reqVo.address != ''">
+            and address like concat('%',#{reqVo.address},'%')
+        </if>
+        <if test="reqVo.remark != null and reqVo.remark != ''">
+            and remark like concat('%',#{reqVo.remark},'%')
+        </if>
+        order by id desc
+    </select>
+
+    <select id="selectByUserNameLimit1" resultType="com.zfkj.demo.vo.basevo.LoginUser">
+        select <include refid="Base_Column_List"/> from sys_user
+        where account=#{username} or phone=#{username}
+        and del_flag = 'NO'
+        limit 1
+    </select>
+    <select id="loginByAccountOrPhone" resultType="com.zfkj.demo.dao.entity.User">
+        SELECT * FROM `sys_user` WHERE (account = #{userAccount} or phone = #{userAccount}) and `password` = #{password} and del_flag = 'NO'
+    </select>
+
+</mapper>
