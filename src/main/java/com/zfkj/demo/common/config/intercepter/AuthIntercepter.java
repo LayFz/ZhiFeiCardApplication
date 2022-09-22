@@ -48,6 +48,7 @@ public class AuthIntercepter implements HandlerInterceptor {
         // 检验用户token
         String cacheObject = jedisService.getJson(Constants.LOGIN_CODE_KEY + token);
         AssertUtils.notNull(cacheObject, Exceptions.LoginEX.NO_LOGIN);
+        System.out.println(cacheObject+"cacheObject");
         // 判断API权限
         UserInfoVO userInfoVO = JSONUtil.toBean(cacheObject, UserInfoVO.class);
         System.out.println(userInfoVO);
@@ -72,6 +73,7 @@ public class AuthIntercepter implements HandlerInterceptor {
             AssertUtils.notEmpty(userInfoVO.getApiAuth(), Exceptions.ApiEX.NO_AUTH);
             // 匹配API权限
             List<AuthVO> apiAuth = userInfoVO.getApiAuth().stream().filter(item -> StrUtil.equalsAnyIgnoreCase(requestURI,item.getUrl(),item.getApi())).collect(Collectors.toList());
+            System.out.println(apiAuth+"apiUyth");
             AssertUtils.notEmpty(apiAuth, Exceptions.ApiEX.NO_AUTH);
         }
         log.info("用户认证拦截器preHandle方法执行: {} ",request.getRequestURI());

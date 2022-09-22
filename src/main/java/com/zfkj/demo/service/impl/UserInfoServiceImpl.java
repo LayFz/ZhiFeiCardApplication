@@ -2,8 +2,10 @@ package com.zfkj.demo.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -27,11 +29,13 @@ import com.zfkj.demo.common.utils.AssertUtils;
 import com.zfkj.demo.vo.basevo.LoginUser;
 import com.zfkj.demo.vo.basevo.PageResult;
 import com.zfkj.demo.vo.reqvo.user.*;
+import com.zfkj.demo.vo.respvo.auth.AuthVO;
 import com.zfkj.demo.vo.respvo.role.RoleAuthListRespVo;
 import com.zfkj.demo.vo.respvo.role.RoleRespVo;
 import com.zfkj.demo.vo.respvo.user.ExportUserRespVo;
 import com.zfkj.demo.vo.respvo.user.QueryUserRespVo;
 import com.zfkj.demo.vo.respvo.user.UserInfoVO;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,7 +73,13 @@ public class UserInfoServiceImpl implements IUserInfoService {
     private RoleRepository roleRepository;
 
     @Autowired
+    private RoleAuthRepository roleAuthRepository;
+
+    @Autowired
     private SystemUserUtil userUtil;
+
+    @Autowired
+    private AuthRepository authRepository;
 
     @Transactional
     @Override
@@ -205,13 +215,44 @@ public class UserInfoServiceImpl implements IUserInfoService {
             return userInfoVO;
         }
         userInfoVO.setRoles(roles);
+        System.out.println(roles+"roles");
         // 获取API 菜单信息
         List<Long> roleIds = new ArrayList<>();
+
+
         roles.forEach(role -> {
             if(Objects.nonNull(role)){
                 roleIds.add(role.getId());
             }
         });
+
+
+        List<Auth> authList = new ArrayList<>();
+        for (int i = 0; i < roleIds.size(); i++) {
+            LambdaQueryWrapper<RoleAuth> authLambdaQueryWrapper = new LambdaQueryWrapper<RoleAuth>()
+                    .eq(RoleAuth::getRoleId, roleIds.get(i));
+            List<RoleAuth> roleAuths = roleAuthRepository.list(authLambdaQueryWrapper);
+            for (RoleAuth roleAuth : roleAuths) {
+                LambdaQueryWrapper<Auth> authLambdaQueryWrapper1 = new LambdaQueryWrapper<Auth>()
+                        .eq(Auth::getId, roleAuth.getAuthId());
+                Auth auth = authRepository.getOne(authLambdaQueryWrapper1);
+                authList.add(auth);
+            }
+
+        }
+        List<AuthVO> authVOS = new ArrayList<>();
+        for (Auth auth : authList) {
+            AuthVO authVO = new AuthVO();
+            authVO.setApi(auth.getUrl());
+            authVO.setIcon(auth.getIcon());
+            authVO.setCreateId(auth.getCreateId());
+            authVO.setForSystem(auth.getForSystem().getName());
+            authVO.setName(auth.getName());
+            authVO.setLevel(auth.getLevel());
+            authVO.setUpdateId(auth.getUpdateId());
+            authVOS.add(authVO);
+        }
+        userInfoVO.setApiAuth(authVOS);
         return userInfoVO;
     }
 
