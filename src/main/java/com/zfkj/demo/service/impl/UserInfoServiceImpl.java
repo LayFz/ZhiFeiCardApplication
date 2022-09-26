@@ -218,8 +218,6 @@ public class UserInfoServiceImpl implements IUserInfoService {
         System.out.println(roles+"roles");
         // 获取API 菜单信息
         List<Long> roleIds = new ArrayList<>();
-
-
         roles.forEach(role -> {
             if(Objects.nonNull(role)){
                 roleIds.add(role.getId());
@@ -227,6 +225,9 @@ public class UserInfoServiceImpl implements IUserInfoService {
         });
 
 
+        /**
+         * 获取权限
+         */
         List<Auth> authList = new ArrayList<>();
         for (int i = 0; i < roleIds.size(); i++) {
             LambdaQueryWrapper<RoleAuth> authLambdaQueryWrapper = new LambdaQueryWrapper<RoleAuth>()
@@ -252,6 +253,9 @@ public class UserInfoServiceImpl implements IUserInfoService {
             authVO.setUpdateId(auth.getUpdateId());
             authVOS.add(authVO);
         }
+        /**
+         * 将权限封装进入userInfo
+         */
         userInfoVO.setApiAuth(authVOS);
         return userInfoVO;
     }

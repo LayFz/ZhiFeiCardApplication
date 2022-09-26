@@ -61,6 +61,8 @@ public class CompanyServiceImpl implements CompanyService {
                 user.setPassword(password.substring(password.length()-6));
                 //创建企业管理员用户
                 iUserInfoService.userSaveUpdate(user);
+//                AddUserRolesReqVo addUserRolesReqVo = AddUserRolesReqVo.builder().build();
+//                addUserRolesReqVo.setUserId();
                 //赋予企业管理员角色
                 iUserInfoService.addUserRoles(null);
 

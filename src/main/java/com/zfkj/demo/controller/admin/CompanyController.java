@@ -34,6 +34,12 @@ public class CompanyController {
         return Result.success(companyService.addOrUpdateCompany(reqVo));
     }
 
+    @ApiOperation(value = "编辑企业",notes = ApiTextHelperConstant.DEVELOPER+DeveloperConstant.YUANMIAOMIAO)
+    @PostMapping("/addCompany")
+    public Result<Boolean> addCompany(Company reqVo){
+        return Result.success(companyService.addOrUpdateCompany(reqVo));
+    }
+
     @ApiOperation(value = "查询企业", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YANGXINGYU)
     @PostMapping("/selectCompany")
     public Result<List<Company>> selectCompanyBy( String number, String adminName, String adminPhone,OpenCloseEnum status){
