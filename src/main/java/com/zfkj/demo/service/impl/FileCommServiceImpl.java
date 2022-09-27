@@ -49,6 +49,7 @@ public class FileCommServiceImpl implements FileCommService {
         baseAttachment.setUrl(downloadUrl);
         baseAttachment.setSize(size);
         baseAttachment.setSuff(FileUtil.getSuffix(save));
+        System.out.println(baseAttachment);
         attachmentRepository.save(baseAttachment);
         FileUploadResVO fileUploadResVO = BeanUtil.toBean(baseAttachment, FileUploadResVO.class);
         return fileUploadResVO;

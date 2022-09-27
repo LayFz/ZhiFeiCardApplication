@@ -45,7 +45,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Company company = companyRepository.getOne(companyLambdaQueryWrapper);
 
         //到期时间
-        long vaildTime = company.getVaildData().getTime();
+        long vaildTime = company.getValidData().getTime();
         //系统时间
         long nowTime = System.currentTimeMillis();
         if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
@@ -73,7 +73,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Company company = companyRepository.getOne(companyLambdaQueryWrapper);
 
         //到期时间
-        long vaildTime = company.getVaildData().getTime();
+        long vaildTime = company.getValidData().getTime();
         //系统时间
         long nowTime = System.currentTimeMillis();
         if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){

@@ -1,15 +1,17 @@
 package com.zfkj.demo.dao.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.zfkj.demo.common.enums.OpenCloseEnum;
 import com.zfkj.demo.dao.entity.base.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -55,13 +57,14 @@ public class Company extends BaseEntity {
     /**
      * 用户id
      */
-    private String userId;
+    private int userId;
 
     /**
      * 企业有效期
      */
     @TableField("valid_data")
-    private Date vaildData;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Date validData;
 
     /**
      * 是否启用：OPEN-启用，CLOSE-禁用
