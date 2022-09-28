@@ -4,8 +4,12 @@ package com.zfkj.demo.controller.admin;
 import com.zfkj.demo.common.constant.ApiTextHelperConstant;
 import com.zfkj.demo.common.constant.DeveloperConstant;
 import com.zfkj.demo.dao.entity.Account;
+import com.zfkj.demo.dao.entity.User;
 import com.zfkj.demo.service.AccountManageService;
 import com.zfkj.demo.vo.basevo.Result;
+import com.zfkj.demo.vo.reqvo.account.AddUpAccountVo;
+import com.zfkj.demo.vo.reqvo.account.DelAccountVo;
+import com.zfkj.demo.vo.reqvo.account.RePassAccountVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +35,9 @@ public class AccountManageController {
      */
     @ApiOperation(value = "添加账号", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @PostMapping("/addAccount")
-    public Result<Boolean> addAccount(Account reqVo){
-        return Result.success(accountManageService.addOrUpdateAccount(reqVo));
+    public Result<Boolean> addAccount(AddUpAccountVo reqVo){
+        return Result.success(accountManageService.addAccount(reqVo));
+
     }
 
     /**
@@ -42,19 +47,20 @@ public class AccountManageController {
      */
     @ApiOperation(value = "编辑账号", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @PostMapping("/updateAccount")
-    public Result<Boolean> updateAccount(Account reqVo){
-        return Result.success(accountManageService.addOrUpdateAccount(reqVo));
+    public Result<Boolean> updateAccount(AddUpAccountVo reqVo){
+        return Result.success(accountManageService.UpdateAccount(reqVo));
+
     }
 
     @ApiOperation(value = "删除账号",notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @PostMapping("/delAccount")
-    public Result<Boolean> delAccount(List<Integer> ids){
-        return Result.success(accountManageService.delAccount(ids));
+    public Result<Boolean> delAccount(DelAccountVo reqvo){
+        return Result.success(accountManageService.delAccount(reqvo));
     }
 
     @ApiOperation(value = "重置密码", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @PostMapping("/resetPassword")
-    public Result<Boolean> resetPassword(Account reqVo){
+    public Result<Boolean> resetPassword(RePassAccountVo reqVo){
         return Result.success(accountManageService.resetPassword(reqVo));
     }
 }

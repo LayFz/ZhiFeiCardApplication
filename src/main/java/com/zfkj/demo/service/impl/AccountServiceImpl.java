@@ -3,13 +3,18 @@ package com.zfkj.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zfkj.demo.common.config.redis.JedisService;
+import com.zfkj.demo.common.utils.AesUtil;
 import com.zfkj.demo.common.utils.SystemUserUtil;
 import com.zfkj.demo.dao.entity.*;
+import com.zfkj.demo.dao.repository.CompanyRepository;
 import com.zfkj.demo.dao.repository.RoleRepository;
 import com.zfkj.demo.dao.repository.UserRepository;
 import com.zfkj.demo.dao.repository.UserRoleRepository;
 import com.zfkj.demo.service.AccountManageService;
 import com.zfkj.demo.service.IUserInfoService;
+import com.zfkj.demo.vo.reqvo.account.AddUpAccountVo;
+import com.zfkj.demo.vo.reqvo.account.DelAccountVo;
+import com.zfkj.demo.vo.reqvo.account.RePassAccountVo;
 import com.zfkj.demo.vo.reqvo.user.AddUserRolesReqVo;
 import com.zfkj.demo.vo.reqvo.user.UserSaveUpdateReqVo;
 import com.zfkj.demo.vo.respvo.user.UserInfoVO;
@@ -31,6 +36,13 @@ public class AccountServiceImpl implements AccountManageService {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    SystemUserUtil userUtil;
+
+    @Autowired
+    CompanyRepository companyRepository;
+
     @Autowired
     UserRoleRepository userRoleRepository;
     @Autowired
@@ -39,24 +51,6 @@ public class AccountServiceImpl implements AccountManageService {
     @Autowired
     SystemUserUtil systemUserUtil;
 
-
-//    @Override
-//    public UserInfoVO getToken(HttpServletRequest request) throws Exception{
-//        // 用户请求认证校验
-//        // 获取请求头 - token
-//        String token = request.getHeader(Constants.AUTH_HEADER);
-//        AssertUtils.notNull(token, Exceptions.LoginEX.NO_LOGIN);
-//        // 检验用户token
-//        String cacheObject = jedisService.getJson(Constants.LOGIN_CODE_KEY + token);
-//        AssertUtils.notNull(cacheObject, Exceptions.LoginEX.NO_LOGIN);
-//        System.out.println(cacheObject+"cacheObject");
-//        // 返回API权限
-//        return JSONUtil.toBean(cacheObject, UserInfoVO.class);
-//
-//    }
-
-
-//    String user_name = String.valueOf(userInfoVO.getName());
 //    @Override
 //    public List<Account> getAllAccount() {
 //        //获取该userid创建的用户
@@ -82,110 +76,150 @@ public class AccountServiceImpl implements AccountManageService {
 //
 //    }
 
+
+    /**
+     * 添加账号
+     * @param reqVo
+     * @return
+     */
     @Override
-    public Boolean addOrUpdateAccount(Account reqVo){
-        UserInfoVO userInfoVO = systemUserUtil.getLoginUser();
-        String user_id = String.valueOf(userInfoVO.getId());
-        AddUserRolesReqVo userRoles = AddUserRolesReqVo.builder().build();
-        //查询公司管理员创建的角色id
-        LambdaQueryWrapper<Role> roleListwrapper = new LambdaQueryWrapper<Role>()
-                .eq(Role::getCreateId,user_id)
-                .eq(Role::getRoleName,reqVo.getRole());
-        List<Role> roleList = roleRepository.list(roleListwrapper);
-        LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<User>()
-                .eq(User::getPhone,reqVo.getPhone());
-        //查询账号是否新建
-        if (userLambdaQueryWrapper != null){
-            //构建存储对象
-            UserSaveUpdateReqVo user = new UserSaveUpdateReqVo();
-            user.setName(reqVo.getName());
-            //默认手机号后六位为账号密码
-            String password = reqVo.getPhone();
-            user.setPassword(password.substring(password.length()-6));
-            user.setPhone(reqVo.getPhone());
-            //创建账号
-            iUserInfoService.userSaveUpdate(user);
-            //获取账号id
-            LambdaQueryWrapper<User> userList = new LambdaQueryWrapper<User>()
-                    .eq(User::getPhone,reqVo.getPhone());
-            User users = (User) userRepository.list(userList);
-            userRoles.setUserId(users.getId().intValue());
-            //
-            List<Integer> ids = new ArrayList<>();
-            for (Role role : roleList) {
-                ids.add(role.getId().intValue());
-            }
-            userRoles.setRoleIds(ids);
-            //赋予角色
-            iUserInfoService.addUserRoles(userRoles);
+    public Boolean addAccount(AddUpAccountVo reqVo){
+        //获取当前登录用户的角色集合
+        UserInfoVO loginUser = userUtil.getLoginUser();
+        //查询公司是否可用并且是否到期
+        LambdaQueryWrapper<Company> companyLambdaQueryWrapper = new LambdaQueryWrapper<Company>()
+                .eq(Company::getUserId, loginUser.getId());
+        Company company = companyRepository.getOne(companyLambdaQueryWrapper);
+        //到期时间
+        long vaildTime = company.getVaildData().getTime();
+        //系统时间
+        long nowTime = System.currentTimeMillis();
+        if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
+//            //查重id
+//            LambdaQueryWrapper<User> userLambda = new LambdaQueryWrapper<User>().
+//                    eq(User::getId,reqVo.getId());
+//            Long id = userRepository.getOne(userLambda).getId();
+//            System.out.println(""+id);
+            //添加账号在sys_uer表
+                User user = User.builder().build();
+                user.setId(reqVo.getId());
+                user.setName(reqVo.getName());
+                user.setPhone(reqVo.getPhone());
+                String password = reqVo.getPhone();
+                user.setPassword(AesUtil.encrypt(password.substring(password.length()-6)));
+                userRepository.save(user);
+            //新增sys_user_role
+                UserRole userRole = UserRole.builder().build();
 
+                //根据管理员id获取该公司的角色列表
+                LambdaQueryWrapper<Role> roleLambda = new LambdaQueryWrapper<Role>().
+                        eq(Role::getCreateId,loginUser.getId())
+                        .eq(Role::getRoleName,reqVo.getRole());
+
+                Integer userid = reqVo.getId().intValue();
+                Integer roleid = roleRepository.getOne(roleLambda).getId().intValue();
+                userRole.setUserId(userid);
+                userRole.setRoleId(roleid);
+                userRoleRepository.save(userRole);
+                return Boolean.TRUE;
+        }else {
+            System.out.println("您已到期！");
             return Boolean.TRUE;
+        }
+    }
 
-        }else{
-            UserSaveUpdateReqVo user = new UserSaveUpdateReqVo();
+    @Override
+    public Boolean UpdateAccount(AddUpAccountVo reqVo) {
+        //获取当前登录用户的角色集合
+        UserInfoVO loginUser = userUtil.getLoginUser();
+        //查询公司是否可用并且是否到期
+        LambdaQueryWrapper<Company> companyLambdaQueryWrapper = new LambdaQueryWrapper<Company>()
+                .eq(Company::getUserId, loginUser.getId());
+        Company company = companyRepository.getOne(companyLambdaQueryWrapper);
+        //到期时间
+        long vaildTime = company.getVaildData().getTime();
+        //系统时间
+        long nowTime = System.currentTimeMillis();
+        if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
+//            //查重id
+//            LambdaQueryWrapper<User> userLambda = new LambdaQueryWrapper<User>().
+//                    eq(User::getId,reqVo.getId());
+//            Long id = userRepository.getOne(userLambda).getId();
+//            System.out.println(""+id);
+            //添加账号在sys_uer表
+            User user = User.builder().build();
+            user.setId(reqVo.getId());
             user.setName(reqVo.getName());
-            user.setPassword(reqVo.getPhone());
             user.setPhone(reqVo.getPhone());
-            //更新账号信息
-            iUserInfoService.userSaveUpdate(user);
-            //获取账号id
-            User users = (User) userRepository.list(userLambdaQueryWrapper);
-            userRoles.setUserId(users.getId().intValue());
-            //
-            List<Integer> ids = new ArrayList<>();
-            for (Role role : roleList) {
-                ids.add(role.getId().intValue());
-            }
-            userRoles.setRoleIds(ids);
-            //赋予角色
-            iUserInfoService.addUserRoles(userRoles);
+            String password = reqVo.getPhone();
+            user.setPassword(AesUtil.encrypt(password.substring(password.length()-6)));
+            userRepository.saveOrUpdate(user);
+            //新增sys_user_role
+            UserRole userRole = UserRole.builder().build();
+            //根据管理员id获取该公司的角色列表
+            LambdaQueryWrapper<Role> roleLambda = new LambdaQueryWrapper<Role>().
+                    eq(Role::getCreateId,loginUser.getId())
+                    .eq(Role::getRoleName,reqVo.getRole());
+            //根据账号id获取sys_user_role
+            LambdaQueryWrapper<UserRole> userRoleLambda = new LambdaQueryWrapper<UserRole>()
+                    .eq(UserRole::getUserId,reqVo.getId());
+            Long id = userRoleRepository.getOne(userRoleLambda).getId();
+            Integer userid = reqVo.getId().intValue();
+            Integer roleid = roleRepository.getOne(roleLambda).getId().intValue();
+            userRole.setId(id);
+            userRole.setUserId(userid);
+            userRole.setRoleId(roleid);
+            userRoleRepository.saveOrUpdate(userRole);
+            return Boolean.TRUE;
+        }else {
+            System.out.println("您已到期！");
             return Boolean.TRUE;
         }
     }
 
     /**
      * 删除账号
-     * @param ids
+     * @param reqvo
      * @return
      */
     @Override
-    public Boolean delAccount(List<Integer> ids) {
-       userRepository.removeByIds(ids);
-       return Boolean.TRUE;
+    public Boolean delAccount(DelAccountVo reqvo) {
+        LambdaQueryWrapper<User> userLambda = new LambdaQueryWrapper<User>()
+                .eq(User::getId,reqvo.getId());
+        User user= userRepository.getOne(userLambda);
+        Long userid = user.getId();
+        LambdaQueryWrapper<UserRole> userRoleLambda = new LambdaQueryWrapper<UserRole>()
+                .eq(UserRole::getUserId,reqvo.getId());
+        UserRole userRole = userRoleRepository.getOne(userRoleLambda);
+        Long userRoleid = userRole.getId();
+        userRepository.removeById(userid);
+        userRoleRepository.removeById(userRoleid);
+        return Boolean.TRUE;
     }
 
     @Override
-    public Boolean resetPassword(Account reqVo) {
-        UserInfoVO userInfoVO = systemUserUtil.getLoginUser();
-        String user_id = String.valueOf(userInfoVO.getId());
-
-        AddUserRolesReqVo userRoles = AddUserRolesReqVo.builder().build();
-
-        LambdaQueryWrapper<Role> roleListwrapper = new LambdaQueryWrapper<Role>()
-                .eq(Role::getCreateId,user_id)
-                .eq(Role::getRoleName,reqVo.getRole());
-        List<Role> roleList = roleRepository.list(roleListwrapper);
-        LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<User>()
-                .eq(User::getPhone,reqVo.getPhone());
-        UserSaveUpdateReqVo user = new UserSaveUpdateReqVo();
-
-        user.setName(reqVo.getName());
-        String password = reqVo.getPhone();
-        user.setPassword(password.substring(password.length()-6));
-        user.setPhone(reqVo.getPhone());
-        //更新账号信息
-        iUserInfoService.userSaveUpdate(user);
-        //获取账号id
-        User users = (User) userRepository.list(userLambdaQueryWrapper);
-        userRoles.setUserId(users.getId().intValue());
-        //
-        List<Integer> ids = new ArrayList<>();
-        for (Role role : roleList) {
-            ids.add(role.getId().intValue());
+    public Boolean resetPassword(RePassAccountVo reqVo) {
+        //获取当前登录用户的角色集合
+        UserInfoVO loginUser = userUtil.getLoginUser();
+        //查询公司是否可用并且是否到期
+        LambdaQueryWrapper<Company> companyLambdaQueryWrapper = new LambdaQueryWrapper<Company>()
+                .eq(Company::getUserId, loginUser.getId());
+        Company company = companyRepository.getOne(companyLambdaQueryWrapper);
+        //到期时间
+        long vaildTime = company.getVaildData().getTime();
+        //系统时间
+        long nowTime = System.currentTimeMillis();
+        if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
+//
+            User user = User.builder().build();
+            user.setId(reqVo.getId());
+            String password = reqVo.getPhone();
+            user.setPassword(AesUtil.encrypt(password.substring(password.length()-6)));
+            userRepository.saveOrUpdate(user);
+            return Boolean.TRUE;
+        }else {
+            System.out.println("您已到期！");
+            return Boolean.TRUE;
         }
-        userRoles.setRoleIds(ids);
-        //赋予角色
-        iUserInfoService.addUserRoles(userRoles);
-        return Boolean.TRUE;
     }
 }
