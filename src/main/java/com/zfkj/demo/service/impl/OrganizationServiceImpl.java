@@ -9,6 +9,7 @@ import com.zfkj.demo.dao.mapper.CompanyMapper;
 import com.zfkj.demo.dao.repository.CompanyRepository;
 import com.zfkj.demo.dao.repository.OrganizationRepository;
 import com.zfkj.demo.service.OrganizationService;
+import com.zfkj.demo.vo.respvo.organize.OrganizationVo;
 import com.zfkj.demo.vo.respvo.user.UserInfoVO;
 import org.checkerframework.checker.units.qual.A;
 import org.checkerframework.checker.units.qual.C;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -105,6 +107,50 @@ public class OrganizationServiceImpl implements OrganizationService {
         }else {
             System.out.println("您已到期！");
             return Boolean.FALSE;
+        }
+    }
+
+    @Override
+    public List<OrganizationVo> getOrganization() {
+        //获取当前登录用户的角色集合
+        UserInfoVO loginUser = userUtil.getLoginUser();
+        //查询公司是否可用并且是否到期
+        LambdaQueryWrapper<Company> companyLambdaQueryWrapper = new LambdaQueryWrapper<Company>()
+                .eq(Company::getUserId, loginUser.getId());
+        Company company = companyRepository.getOne(companyLambdaQueryWrapper);
+
+        //到期时间
+        long vaildTime = company.getValidData().getTime();
+        //系统时间
+        long nowTime = System.currentTimeMillis();
+        if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
+            /**
+             * 查询该公司名下的父级
+             */
+            LambdaQueryWrapper<Organize> organizeLambdaQueryWrapper = new LambdaQueryWrapper<Organize>()
+                    .eq(Organize::getCompanyId, company.getId())
+                    .eq(Organize::getChildId,0);
+            List<Organize> organizes = organizationRepository.list(organizeLambdaQueryWrapper);
+            List<OrganizationVo> organizationVos = new ArrayList<>();
+            for (Organize organize : organizes) {
+                /**
+                 * 根据父级查子集
+                 */
+                LambdaQueryWrapper<Organize> organizeLambdaQueryWrapper1  = new LambdaQueryWrapper<Organize>()
+                        .eq(Organize::getChildId,organize.getId());
+                List<Organize> organizesList = organizationRepository.list(organizeLambdaQueryWrapper1);
+                OrganizationVo organizationVo = new OrganizationVo();
+                organizationVo.setId(organize.getId());
+                organizationVo.setMain_name(organize.getNickName());
+                organizationVo.setOrganizes(organizesList);
+                organizationVos.add(organizationVo);
+            }
+            return organizationVos;
+
+
+        }else {
+            System.out.println("您已过期");
+            return null;
         }
     }
 }

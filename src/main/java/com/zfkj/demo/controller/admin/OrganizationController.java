@@ -6,6 +6,7 @@ import com.zfkj.demo.dao.entity.Organize;
 import com.zfkj.demo.dao.entity.User;
 import com.zfkj.demo.service.OrganizationService;
 import com.zfkj.demo.vo.basevo.Result;
+import com.zfkj.demo.vo.respvo.organize.OrganizationVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,10 @@ public class OrganizationController {
     @GetMapping("/delorganize")
     public Result<Boolean> editHeadOrganization(@RequestParam int id){
         return Result.success(organizationService.delOrganization(id));
+    }
+    @ApiOperation(value= "查询整个公司的结构组织（注意要以公司管理员账号登陆）", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.LIUJIE)
+    @GetMapping("/getorganzition")
+    public Result<List<OrganizationVo>> selectOrganization(){
+        return Result.success(organizationService.getOrganization());
     }
 }

@@ -1,7 +1,9 @@
 package com.zfkj.demo.service;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.zfkj.demo.dao.entity.Organize;
+import com.zfkj.demo.vo.respvo.organize.OrganizationVo;
+
+import java.util.List;
 
 /**
  * @author liujie
@@ -22,4 +24,10 @@ public interface OrganizationService {
      * @return
      */
     Boolean delOrganization(int id);
+
+    /**
+     * 查询对应公司的组织结构信息
+     * @return
+     */
+    List<OrganizationVo> getOrganization();
 }

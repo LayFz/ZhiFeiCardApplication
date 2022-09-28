@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: scaffold_service
+    name: zhifei_service
   servlet:
     multipart:
       max-file-size: 300MB
@@ -73,13 +73,14 @@ mybatis-plus:
 
 # 文件通用路径配置
 filesave:
-  windows: G:\rcl\
+  windows: V:\智菲实训\upload
   linux: /zhifei/project/materials-experiment/materials-experiment-service/upload/
   upload-head: http://localhost:9002
 
 ignore:
   # 白名单，不需要登录即可访问
   urls:
+    - /api/user/register
     - /api/user/getboard
     - /api/manager/getCode
     - /api/manager/login
@@ -97,6 +98,7 @@ ignore:
     - /excel/**
   # 白名单，需要登录，但不需要分配权限即可访问
   tokenurls:
+    - /api/manager/article/select
     - /api/user/saveboard
     - /api/manager/logout
     - /api/manager/user/getUserMenus

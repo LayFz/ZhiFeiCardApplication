@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: scaffold_service
+    name: zhifei_service
   servlet:
     multipart:
       max-file-size: 300MB

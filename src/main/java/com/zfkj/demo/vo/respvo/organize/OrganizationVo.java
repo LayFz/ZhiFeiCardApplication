@@ -1,10 +1,13 @@
 package com.zfkj.demo.vo.respvo.organize;
 
+import com.zfkj.demo.dao.entity.Organize;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * @author liujie
@@ -18,4 +21,7 @@ import lombok.NoArgsConstructor;
 public class OrganizationVo {
     @ApiModelProperty(value = "ID",example = "1")
     private Long id;
+    @ApiModelProperty(value = "NAME",example = "人力部")
+    private String main_name;
+    private List<Organize> organizes;
 }
