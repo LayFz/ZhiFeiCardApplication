@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class accountByReVo {
+public class AccountByReVo {
     private Long id;
     private String phone;
     private String name;

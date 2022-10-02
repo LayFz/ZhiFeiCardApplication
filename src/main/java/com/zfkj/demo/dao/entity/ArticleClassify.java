@@ -12,11 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("article_classify")
-public class ArticleClassif extends BaseEntity {
-    private Long id;
+public class ArticleClassify extends BaseEntity {
     private String name;
     private Long companyId;
     private int level;
-
-
 }

@@ -19,6 +19,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrganizationVo {
+    @ApiModelProperty(value = "Name",example = "星之援科技有限公司")
+    private String company_name;
     @ApiModelProperty(value = "ID",example = "1")
     private Long id;
     @ApiModelProperty(value = "NAME",example = "人力部")

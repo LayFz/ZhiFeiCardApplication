@@ -54,11 +54,18 @@ public class OrganizationServiceImpl implements OrganizationService {
             /**
              * 父级的chil_id 字段为0
              */
-            organize.setChildId(0);
-            organize.setCompanyId(company.getId().intValue());
-            organizationRepository.saveOrUpdate(organize);
-            System.out.println("sucess");
-            return Boolean.TRUE;
+            if (organize.getChildId()!=0){
+                organize.setCompanyId(company.getId().intValue());
+                organizationRepository.saveOrUpdate(organize);
+                System.out.println("sucess");
+                return Boolean.TRUE;
+            }else {
+                organize.setCompanyId(company.getId().intValue());
+                organizationRepository.saveOrUpdate(organize);
+                System.out.println("sucess");
+                return Boolean.TRUE;
+            }
+
         }else {
             System.out.println("您已到期！");
             return Boolean.FALSE;
@@ -140,6 +147,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                         .eq(Organize::getChildId,organize.getId());
                 List<Organize> organizesList = organizationRepository.list(organizeLambdaQueryWrapper1);
                 OrganizationVo organizationVo = new OrganizationVo();
+                organizationVo.setCompany_name(company.getName());
                 organizationVo.setId(organize.getId());
                 organizationVo.setMain_name(organize.getNickName());
                 organizationVo.setOrganizes(organizesList);

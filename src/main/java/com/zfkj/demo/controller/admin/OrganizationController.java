@@ -41,7 +41,7 @@ public class OrganizationController {
     }
     @ApiOperation(value = "删除子集或者父级（父级删除将会删除子集）", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.LIUJIE)
     @GetMapping("/delorganize")
-    public Result<Boolean> editHeadOrganization(@RequestParam int id){
+    public Result<Boolean> editHeadOrganization(@RequestParam("id") int id){
         return Result.success(organizationService.delOrganization(id));
     }
     @ApiOperation(value= "查询整个公司的结构组织（注意要以公司管理员账号登陆）", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.LIUJIE)

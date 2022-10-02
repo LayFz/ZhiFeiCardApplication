@@ -1,5 +1,6 @@
 package com.zfkj.demo.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zfkj.demo.dao.entity.base.BaseEntity;
 import com.zfkj.demo.common.enums.OpenCloseEnum;
@@ -9,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 /**
  * <p>
@@ -74,5 +77,10 @@ public class User extends BaseEntity {
      * 是否删除：YES-是,NO-否
      */
     private YesNoEnum delFlag;
+
+    /**
+     * 最后一次登录时间
+     */
+    private Date lastLogin;
 
 }

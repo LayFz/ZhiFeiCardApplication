@@ -9,6 +9,7 @@ import cn.hutool.json.JSONUtil;
 import com.zfkj.demo.common.config.redis.JedisService;
 import com.zfkj.demo.common.constant.Constants;
 import com.zfkj.demo.common.exception.Exceptions;
+import com.zfkj.demo.dao.repository.UserRoleRepository;
 import com.zfkj.demo.service.IUserInfoService;
 import com.zfkj.demo.service.login.ValidateCodeService;
 import com.zfkj.demo.common.utils.AssertUtils;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * 验证码登录逻辑实现处理
@@ -36,6 +38,7 @@ public class ValidateCodeServiceImpl implements ValidateCodeService {
     private final JedisService jedisService;
     private final IUserInfoService iUserInfoService;
     private final SystemUserUtil systemUserUtil;
+    private final UserRoleRepository userRoleRepository;
 
     /**
      * 生成验证码
@@ -99,7 +102,6 @@ public class ValidateCodeServiceImpl implements ValidateCodeService {
         String key = Constants.LOGIN_CODE_KEY + token;
         jedisService.setJson(key, JSONUtil.toJsonStr(userInfo), Constants.TOKEN_EXPIRE);
         systemUserUtil.setUserInfoVO(userInfo);
-
         return userInfo;
     }
 

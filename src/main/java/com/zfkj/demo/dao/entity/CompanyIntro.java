@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @TableName("company_intro")
 public class CompanyIntro extends BaseEntity {
-    private  Long id;
     private  String name;
     private  Long companyId;
     private  Long belongBannerId;

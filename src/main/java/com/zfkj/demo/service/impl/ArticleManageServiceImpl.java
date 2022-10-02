@@ -2,7 +2,7 @@ package com.zfkj.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zfkj.demo.common.utils.SystemUserUtil;
-import com.zfkj.demo.dao.entity.ArticleClassif;
+import com.zfkj.demo.dao.entity.ArticleClassify;
 import com.zfkj.demo.dao.entity.ArticleManage;
 import com.zfkj.demo.dao.entity.Company;
 import com.zfkj.demo.dao.repository.ArticleClassifyRepository;
@@ -62,9 +62,9 @@ public class ArticleManageServiceImpl implements ArticleManageService {
                 ArticleReqVo reqVo = ArticleReqVo.builder().build();
                 reqVo.setId(articleList.get(i).getId());
                 reqVo.setName(articleList.get(i).getName());
-                LambdaQueryWrapper<ArticleClassif> articleClassifLambda = new LambdaQueryWrapper<ArticleClassif>()
-                        .eq(ArticleClassif::getId,articleList.get(i).getClassifyId());
-                ArticleClassif articleClassif = articleClassifyRepository.getOne(articleClassifLambda);
+                LambdaQueryWrapper<ArticleClassify> articleClassifLambda = new LambdaQueryWrapper<ArticleClassify>()
+                        .eq(ArticleClassify::getId,articleList.get(i).getClassifyId());
+                ArticleClassify articleClassif = articleClassifyRepository.getOne(articleClassifLambda);
                 String classifName = articleClassif.getName();
                 reqVo.setClassif(classifName);
                 reqVo.setTrueNumber(articleList.get(i).getViewNumber());
@@ -102,8 +102,8 @@ public class ArticleManageServiceImpl implements ArticleManageService {
         long nowTime = System.currentTimeMillis();
         if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
             //根据classify 查询classifyId;
-            LambdaQueryWrapper<ArticleClassif> articleClassifLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassif>()
-                    .eq(ArticleClassif::getName,ByVo.getClassif());
+            LambdaQueryWrapper<ArticleClassify> articleClassifLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassify>()
+                    .eq(ArticleClassify::getName,ByVo.getClassif());
             Long classifId = articleClassifyRepository.getOne(articleClassifLambdaQueryWrapper).getId();
 
             //根据管理员id获取article表相关数据
@@ -118,9 +118,9 @@ public class ArticleManageServiceImpl implements ArticleManageService {
             for (int i=0;i<articleList.size();i++){
                 reqVo.setId(articleList.get(i).getId());
                 reqVo.setName(articleList.get(i).getName());
-                LambdaQueryWrapper<ArticleClassif> articleClassifLambda = new LambdaQueryWrapper<ArticleClassif>()
-                        .eq(ArticleClassif::getId,articleList.get(i).getClassifyId());
-                ArticleClassif articleClassif = articleClassifyRepository.getOne(articleClassifLambda);
+                LambdaQueryWrapper<ArticleClassify> articleClassifLambda = new LambdaQueryWrapper<ArticleClassify>()
+                        .eq(ArticleClassify::getId,articleList.get(i).getClassifyId());
+                ArticleClassify articleClassif = articleClassifyRepository.getOne(articleClassifLambda);
 
                 String classifName = articleClassif.getName();
                 reqVo.setClassif(classifName);
@@ -159,8 +159,8 @@ public class ArticleManageServiceImpl implements ArticleManageService {
         long nowTime = System.currentTimeMillis();
         if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
             //根据classify 查询classifyId;
-            LambdaQueryWrapper<ArticleClassif> articleClassifLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassif>()
-                    .eq(ArticleClassif::getName,reVo.getClassIf());
+            LambdaQueryWrapper<ArticleClassify> articleClassifLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassify>()
+                    .eq(ArticleClassify::getName,reVo.getClassIf());
             Long classifId = articleClassifyRepository.getOne(articleClassifLambdaQueryWrapper).getId();
             ArticleManage articleManage = ArticleManage.builder().build();
             articleManage.setId(reVo.getId());
@@ -191,8 +191,8 @@ public class ArticleManageServiceImpl implements ArticleManageService {
         long nowTime = System.currentTimeMillis();
         if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
             //根据classify 查询classifyId;
-            LambdaQueryWrapper<ArticleClassif> articleClassifLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassif>()
-                    .eq(ArticleClassif::getName,reVo.getClassIf());
+            LambdaQueryWrapper<ArticleClassify> articleClassifLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassify>()
+                    .eq(ArticleClassify::getName,reVo.getClassIf());
             Long classifId = articleClassifyRepository.getOne(articleClassifLambdaQueryWrapper).getId();
             ArticleManage articleManage = ArticleManage.builder().build();
             articleManage.setId(reVo.getId());

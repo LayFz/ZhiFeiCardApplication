@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -98,6 +99,9 @@ public class UserInfoServiceImpl implements IUserInfoService {
             //构建user存储对象
             user.setPassword(AesUtil.encrypt(user.getPassword()));
         }
+//        user.setLastLogin(new Date());
+        System.out.println(user+"ipipiip");
+        System.out.println(user.getId()+"ipipiip");
         userRepository.saveOrUpdate(user);
         //构建返回对象
         QueryUserRespVo respVo = QueryUserRespVo.builder().build();
@@ -206,10 +210,19 @@ public class UserInfoServiceImpl implements IUserInfoService {
         AssertUtils.isTrue(StrUtil.equalsIgnoreCase(userInfo.getStatus().getCode(), OpenCloseEnum.OPEN.getCode()),Exceptions.LoginEX.USER_STATUS_ERROR);
         UserInfoVO userInfoVO = BeanUtil.copyProperties(userInfo, UserInfoVO.class);
 
+        // 更新登录时间
+//        userInfo.setLastLogin(new Date());
+        System.out.println(userInfo.getId()+"ididididid");
+        System.out.println(userInfo+"ididididid");
+//        System.out.println(userInfo);
+//        System.out.println("12315613516531315");
+//        userRepository.saveOrUpdate(userInfo);
         // 获取角色信息
         List<RoleRespVo> rolesByUserId = roleService.getRolesByUserId(userInfo.getId());
         // 过滤禁用的角色
         List<RoleRespVo> roles = rolesByUserId.stream().filter(role -> StrUtil.equals(role.getIsValid().getCode(), YesNoEnum.YES.getCode())).collect(Collectors.toList());
+
+
         // 无角色信息
         if(roles.isEmpty()){
             return userInfoVO;

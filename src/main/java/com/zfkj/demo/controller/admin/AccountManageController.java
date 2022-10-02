@@ -3,14 +3,10 @@ package com.zfkj.demo.controller.admin;
 
 import com.zfkj.demo.common.constant.ApiTextHelperConstant;
 import com.zfkj.demo.common.constant.DeveloperConstant;
-import com.zfkj.demo.dao.entity.Account;
 import com.zfkj.demo.dao.entity.User;
 import com.zfkj.demo.service.AccountManageService;
 import com.zfkj.demo.vo.basevo.Result;
-import com.zfkj.demo.vo.reqvo.account.AddUpAccountVo;
-import com.zfkj.demo.vo.reqvo.account.DelAccountVo;
-import com.zfkj.demo.vo.reqvo.account.RePassAccountVo;
-import com.zfkj.demo.vo.reqvo.account.accountByReVo;
+import com.zfkj.demo.vo.reqvo.account.*;
 import com.zfkj.demo.vo.respvo.account.accountRespVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,7 +37,7 @@ public class AccountManageController {
      */
     @ApiOperation(value = "查询账号", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @GetMapping("/selectAccount")
-    public Result<List<accountRespVo>> selectAccountList(accountByReVo reVo){
+    public Result<List<accountRespVo>> selectAccountList(@RequestParam("search") String reVo){
         return Result.success(accountManageService.selectAccount(reVo));
     }
     /**
@@ -51,7 +47,7 @@ public class AccountManageController {
      */
     @ApiOperation(value = "添加账号", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @PostMapping("/addAccount")
-    public Result<Boolean> addAccount(AddUpAccountVo reqVo){
+    public Result<Boolean> addAccount(@RequestBody AddUpAccountVo reqVo){
         return Result.success(accountManageService.addAccount(reqVo));
 
     }
@@ -63,14 +59,14 @@ public class AccountManageController {
      */
     @ApiOperation(value = "编辑账号", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @PostMapping("/updateAccount")
-    public Result<Boolean> updateAccount(AddUpAccountVo reqVo){
+    public Result<Boolean> updateAccount(@RequestBody UpdateAccountVo reqVo){
         return Result.success(accountManageService.UpdateAccount(reqVo));
 
     }
 
     @ApiOperation(value = "删除账号",notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @PostMapping("/delAccount")
-    public Result<Boolean> delAccount(DelAccountVo reqvo){
+    public Result<Boolean> delAccount(@RequestBody DelAccountVo reqvo){
         return Result.success(accountManageService.delAccount(reqvo));
     }
 

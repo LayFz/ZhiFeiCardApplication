@@ -2,7 +2,6 @@ package com.zfkj.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zfkj.demo.common.utils.SystemUserUtil;
-import com.zfkj.demo.dao.entity.ArticleClassif;
 import com.zfkj.demo.dao.entity.Banner;
 import com.zfkj.demo.dao.entity.Company;
 import com.zfkj.demo.dao.entity.CompanyIntro;
@@ -58,6 +57,7 @@ public class CompanyIntroServiceImpl implements CompanyIntroService {
             System.out.println("Size:"+introList.size());
             for (CompanyIntro companyIntro : introList) {
                 introRespVo respVo = introRespVo.builder().build();
+                respVo.setId(companyIntro.getId().intValue());
                 respVo.setName(companyIntro.getName());
                 respVo.setAdminName(loginUser.getName());
                 respVo.setCreatime(companyIntro.getCreateTime());
@@ -74,7 +74,7 @@ public class CompanyIntroServiceImpl implements CompanyIntroService {
 
 
     @Override
-    public Boolean addCompanyIntro(saveIntroReVo reVo) {
+    public Boolean addCompanyIntro(CompanyIntro reVo) {
         //获取当前登录用户的角色集合
         UserInfoVO loginUser = userUtil.getLoginUser();
         //查询公司是否可用并且是否到期
@@ -97,7 +97,6 @@ public class CompanyIntroServiceImpl implements CompanyIntroService {
             Long bannerId = banner.getId();
 
             CompanyIntro companyIntro = CompanyIntro.builder().build();
-            companyIntro.setId(reVo.getId());
             companyIntro.setCompanyId(company.getId());
             companyIntro.setBelongBannerId(bannerId);
             companyIntro.setName(reVo.getName());

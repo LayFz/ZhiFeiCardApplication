@@ -1,5 +1,6 @@
 package com.zfkj.demo.service;
 
+import com.zfkj.demo.dao.entity.ArticleClassify;
 import com.zfkj.demo.vo.reqvo.articleClassify.delArcClassifyId;
 import com.zfkj.demo.vo.reqvo.articleClassify.saveArcClassifyReVo;
 import com.zfkj.demo.vo.reqvo.articleClassify.upDownArcClassifyReVo;
@@ -9,11 +10,11 @@ import java.util.List;
 
 public interface ArticleClassifyService {
 
-    List<articleClassifyRespVo> getArticleClassify();
+    List<ArticleClassify> getArticleClassify();
 
-    Boolean addArticleClassify(saveArcClassifyReVo reVo);
+    Boolean addArticleClassify(ArticleClassify reVo);
 
-    Boolean updataArticleClassify(saveArcClassifyReVo reVo);
+    Boolean updataArticleClassify(ArticleClassify reVo);
 
     Boolean delArticleClassify(delArcClassifyId reVo);
 

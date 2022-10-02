@@ -10,6 +10,7 @@ import java.util.Date;
 @Data
 @Builder
 public class articleClassifyRespVo {
+        private Integer id;
         private String name;
         private String adminName;
         private LocalDateTime creatime;

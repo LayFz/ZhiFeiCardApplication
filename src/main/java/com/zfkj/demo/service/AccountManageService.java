@@ -1,11 +1,7 @@
 package com.zfkj.demo.service;
 
-import com.zfkj.demo.dao.entity.Account;
 import com.zfkj.demo.dao.entity.User;
-import com.zfkj.demo.vo.reqvo.account.AddUpAccountVo;
-import com.zfkj.demo.vo.reqvo.account.DelAccountVo;
-import com.zfkj.demo.vo.reqvo.account.RePassAccountVo;
-import com.zfkj.demo.vo.reqvo.account.accountByReVo;
+import com.zfkj.demo.vo.reqvo.account.*;
 import com.zfkj.demo.vo.respvo.account.accountRespVo;
 
 
@@ -26,7 +22,7 @@ public interface AccountManageService {
      * @param reVo
      * @return
      */
-    List<accountRespVo> selectAccount(accountByReVo reVo);
+    List<accountRespVo> selectAccount(String reVo);
     /**
      * 添加账号
      */
@@ -38,7 +34,7 @@ public interface AccountManageService {
      * @param reqVo
      * @return
      */
-    Boolean UpdateAccount(AddUpAccountVo reqVo);
+    Boolean UpdateAccount(UpdateAccountVo reqVo);
 
     /**
      * 删除账号

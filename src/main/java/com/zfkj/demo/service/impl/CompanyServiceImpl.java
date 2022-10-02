@@ -127,22 +127,38 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public List<Company> selectCompanyBy(String number, String adminName, String phone,OpenCloseEnum status) {
-        if (status.toString()!=null) {
-            LambdaQueryWrapper<Company> selectCompanyBy = new LambdaQueryWrapper<Company>()
-                    .eq(Company::getIsVaild,status)
-                    .or().eq(Company::getNumber,number)
-                    .or().eq(Company::getAdminName,adminName)
-                    .or().eq(Company::getPhone,phone);
-            return companyRepository.list(selectCompanyBy);
-
-        }else{
-            LambdaQueryWrapper<Company> selectCompanyBy = new LambdaQueryWrapper<Company>()
-                    .or().eq(Company::getNumber,number)
-                    .or().eq(Company::getAdminName,adminName)
-                    .or().eq(Company::getPhone,phone);
-            return companyRepository.list(selectCompanyBy);
+    public List<Company> selectCompanyBy(String reqVo, OpenCloseEnum openCloseEnum) {
+        if (openCloseEnum != null){
+            LambdaQueryWrapper<Company> companyLambdaQueryWrapper = new LambdaQueryWrapper<Company>()
+                    .like(Company::getNumber,reqVo)
+                    .eq(Company::getIsVaild, openCloseEnum.getCode())
+                    .or()
+                    .like(Company::getPhone,reqVo)
+                    .eq(Company::getIsVaild, openCloseEnum.getCode())
+                    .or()
+                    .like(Company::getName, reqVo)
+                    .eq(Company::getIsVaild, openCloseEnum.getCode())
+                    .or()
+                    .like(Company::getNickname, reqVo)
+                    .eq(Company::getIsVaild, openCloseEnum.getCode())
+                    .or()
+                    .like(Company::getAdminName, reqVo)
+                    .eq(Company::getIsVaild, openCloseEnum.getCode());
+            return companyRepository.list(companyLambdaQueryWrapper);
+        }else {
+            LambdaQueryWrapper<Company> companyLambdaQueryWrapper = new LambdaQueryWrapper<Company>()
+                    .like(Company::getNumber,reqVo)
+                    .or()
+                    .like(Company::getPhone,reqVo)
+                    .or()
+                    .like(Company::getName, reqVo)
+                    .or()
+                    .like(Company::getNickname, reqVo)
+                    .or()
+                    .like(Company::getAdminName, reqVo);
+            return companyRepository.list(companyLambdaQueryWrapper);
         }
+
     }
 
     @Override
