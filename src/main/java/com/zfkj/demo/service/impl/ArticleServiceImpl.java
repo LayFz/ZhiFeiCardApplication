@@ -1,8 +1,7 @@
 package com.zfkj.demo.service.impl;
 
-import cn.hutool.http.HtmlUtil;
-import com.zfkj.demo.dao.entity.Article;
-import com.zfkj.demo.dao.entity.Role;
+
+import com.zfkj.demo.dao.entity.*;
 import com.zfkj.demo.dao.repository.ArticleRepository;
 import com.zfkj.demo.service.ArticleService;
 import org.springframework.beans.BeanUtils;
@@ -21,6 +20,7 @@ import java.util.List;
 public class ArticleServiceImpl implements ArticleService {
     @Autowired
     ArticleRepository articleRepository;
+
 
 
     @Override
@@ -50,4 +50,6 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> selectArticle() {
         return articleRepository.list();
     }
+
+
 }

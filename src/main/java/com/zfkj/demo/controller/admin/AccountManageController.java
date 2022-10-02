@@ -10,6 +10,8 @@ import com.zfkj.demo.vo.basevo.Result;
 import com.zfkj.demo.vo.reqvo.account.AddUpAccountVo;
 import com.zfkj.demo.vo.reqvo.account.DelAccountVo;
 import com.zfkj.demo.vo.reqvo.account.RePassAccountVo;
+import com.zfkj.demo.vo.reqvo.account.accountByReVo;
+import com.zfkj.demo.vo.respvo.account.accountRespVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,23 @@ public class AccountManageController {
     AccountManageService accountManageService;
 
 
+    /**
+     * 获取账号信息
+     */
+    @ApiOperation(value = "获取账号列表", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
+    @GetMapping("/getAccountList")
+    public Result<List<accountRespVo>> getAccountList(){
+        return Result.success(accountManageService.getAccountList());
+    }
+
+    /**
+     * 获取账号
+     */
+    @ApiOperation(value = "查询账号", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
+    @GetMapping("/selectAccount")
+    public Result<List<accountRespVo>> selectAccountList(accountByReVo reVo){
+        return Result.success(accountManageService.selectAccount(reVo));
+    }
     /**
      * 添加账号信息
      * @param reqVo

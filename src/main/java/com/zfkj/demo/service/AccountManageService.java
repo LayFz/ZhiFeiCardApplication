@@ -5,6 +5,8 @@ import com.zfkj.demo.dao.entity.User;
 import com.zfkj.demo.vo.reqvo.account.AddUpAccountVo;
 import com.zfkj.demo.vo.reqvo.account.DelAccountVo;
 import com.zfkj.demo.vo.reqvo.account.RePassAccountVo;
+import com.zfkj.demo.vo.reqvo.account.accountByReVo;
+import com.zfkj.demo.vo.respvo.account.accountRespVo;
 
 
 import java.util.List;
@@ -12,15 +14,19 @@ import java.util.List;
 public interface AccountManageService {
 
 
-//    /**
-//     * 获取Token
-//     */
-//    UserInfoVO getToken(HttpServletRequest request) throws Exception;
+
 
     /**
      * 获取账号列表
      */
-//    List<Account> getAllAccount();
+    List<accountRespVo> getAccountList();
+
+    /**
+     * 查询账号
+     * @param reVo
+     * @return
+     */
+    List<accountRespVo> selectAccount(accountByReVo reVo);
     /**
      * 添加账号
      */
