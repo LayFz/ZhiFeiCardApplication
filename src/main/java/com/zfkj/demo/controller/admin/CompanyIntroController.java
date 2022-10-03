@@ -18,11 +18,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Api(tags = "后台管理系统-个性化简介-分类管理")
 @RestController
-@RequestMapping("api/manager/companyIntro")
+@RequestMapping("/api/manager/companyIntro")
 public class CompanyIntroController {
 
     @Autowired
@@ -48,7 +49,8 @@ public class CompanyIntroController {
 
     @ApiOperation(value = "删除简介", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @PostMapping("/delIntro")
-    public Result<Boolean> delIntro(@RequestBody delIntroReVo reVo){
+    public Result<Boolean> delIntro(@Valid @RequestBody delIntroReVo reVo){
+        System.out.println(reVo);
         return Result.success(companyIntroService.delCompanyIntro(reVo));
     }
 

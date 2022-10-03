@@ -1,8 +1,10 @@
 package com.zfkj.demo.vo.reqvo.account;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author liujie
@@ -10,7 +12,8 @@ import lombok.Data;
  * @date 2022/10/2 18:29
  */
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateAccountVo {
     @ApiModelProperty(value = "id",example = "2")
     private int id;

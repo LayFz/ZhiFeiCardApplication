@@ -61,6 +61,7 @@ public class CompanyIntroServiceImpl implements CompanyIntroService {
                 respVo.setName(companyIntro.getName());
                 respVo.setAdminName(loginUser.getName());
                 respVo.setCreatime(companyIntro.getCreateTime());
+                respVo.setContent(companyIntro.getContent());
                 resultList.add(respVo);
             }
             return resultList;
@@ -178,6 +179,7 @@ public class CompanyIntroServiceImpl implements CompanyIntroService {
         if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
             LambdaQueryWrapper<CompanyIntro> classifLambda = new LambdaQueryWrapper<CompanyIntro>()
                     .eq(CompanyIntro::getId,reVo.getId());
+            System.out.println(introRepository.getOne(classifLambda));
             int level = introRepository.getOne(classifLambda).getLevel();
             CompanyIntro companyIntro = CompanyIntro.builder().build();
             companyIntro.setId(reVo.getId());

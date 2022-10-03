@@ -1,11 +1,14 @@
 package com.zfkj.demo.vo.reqvo.account;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AddUpAccountVo {
     @ApiModelProperty(value = "姓名",example = "张三")
     private String name;

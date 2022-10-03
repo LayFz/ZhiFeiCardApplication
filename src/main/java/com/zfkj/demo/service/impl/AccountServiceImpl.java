@@ -59,7 +59,7 @@ public class AccountServiceImpl implements AccountManageService {
         List<User> userList = userRepository.list();
         List<accountRespVo> resultList  = new ArrayList<>();
         for (int i=0;i<userList.size();i++){
-            accountRespVo account = accountRespVo.builder().build();
+            accountRespVo account = new accountRespVo();
             account.setId(userList.get(i).getId());
             account.setName(userList.get(i).getName());
             account.setPhone(userList.get(i).getPhone());
@@ -92,7 +92,7 @@ public class AccountServiceImpl implements AccountManageService {
             List<User> userList = userRepository.list(userLambda);
             List<accountRespVo> resultList  = new ArrayList<>();
             for (int i=0;i<userList.size();i++){
-                accountRespVo account = accountRespVo.builder().build();
+                accountRespVo account = new accountRespVo();
                 account.setId(userList.get(i).getId());
                 account.setName(userList.get(i).getName());
                 account.setPhone(userList.get(i).getPhone());
@@ -122,11 +122,10 @@ public class AccountServiceImpl implements AccountManageService {
      */
     @Override
     public Boolean addAccount(AddUpAccountVo reqVo){
+        System.out.println(reqVo);
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<User>()
-                .eq(User::getAccount, reqVo.getPhone())
-                .or()
                 .eq(User::getAccount, reqVo.getPhone());
-        if (userRepository.list(userLambdaQueryWrapper)!=null){
+        if (userRepository.list(userLambdaQueryWrapper).size()!=0){
             System.out.println("账号已存在");
             return Boolean.FALSE;
         }else {
@@ -145,6 +144,7 @@ public class AccountServiceImpl implements AccountManageService {
             user = userRepository.getOne(userLambdaQueryWrapper1);
             userRole.setUserId(user.getId().intValue());
             userRole.setRoleId(reqVo.getRoleId());
+            userRoleRepository.saveOrUpdate(userRole);
             return Boolean.TRUE;
         }
 
@@ -152,30 +152,40 @@ public class AccountServiceImpl implements AccountManageService {
 
     @Override
     public Boolean UpdateAccount(UpdateAccountVo reqVo) {
-        LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<User>()
-                .eq(User::getPhone, reqVo.getPhone())
-                .or()
-                .eq(User::getName, reqVo.getName());
-        if (userRepository.list(userLambdaQueryWrapper)!=null){
-            return Boolean.FALSE;
-        }else {
-            LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<User>()
-                    .eq(User::getId,reqVo.getId());
-            User user = userRepository.getOne(lambdaQueryWrapper);
+        LambdaQueryWrapper<User> userLambdaQueryWrapper1 = new LambdaQueryWrapper<User>()
+                .eq(User::getId, reqVo.getId());
+        User user = userRepository.getOne(userLambdaQueryWrapper1);
+        if (user.getPhone().equals(reqVo.getPhone())) {
             user.setName(reqVo.getName());
-            user.setPhone(reqVo.getPhone());
-            userRepository.saveOrUpdate(user);
-            /**
-             * 查询并更新角色
-             */
-            LambdaQueryWrapper<UserRole> userRoleLambdaQueryWrapper = new LambdaQueryWrapper<UserRole>()
-                    .eq(UserRole::getUserId,user.getId());
+        } else {
+            LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<User>()
+                    .eq(User::getPhone, reqVo.getPhone());
+            if (userRepository.list(userLambdaQueryWrapper).size() != 0) {
+                System.out.println("该账号已存在，请更换账号名称");
+                return Boolean.FALSE;
+            } else {
+                user.setName(reqVo.getName());
+                user.setPhone(reqVo.getPhone());
+            }
+        }
+        userRepository.saveOrUpdate(user);
+        /**
+         * 查询并更新角色
+         */
+        LambdaQueryWrapper<UserRole> userRoleLambdaQueryWrapper = new LambdaQueryWrapper<UserRole>()
+                .eq(UserRole::getUserId, user.getId());
+        if (userRoleRepository.list(userRoleLambdaQueryWrapper).size() != 0) {
             UserRole userRole = userRoleRepository.getOne(userRoleLambdaQueryWrapper);
             userRole.setRoleId(reqVo.getRoleId());
             userRoleRepository.saveOrUpdate(userRole);
             return Boolean.TRUE;
+        } else {
+            UserRole userRole = new UserRole();
+            userRole.setRoleId(reqVo.getRoleId());
+            userRole.setUserId(reqVo.getId());
+            userRoleRepository.saveOrUpdate(userRole);
+            return Boolean.TRUE;
         }
-
     }
 
     /**
@@ -192,10 +202,15 @@ public class AccountServiceImpl implements AccountManageService {
         LambdaQueryWrapper<UserRole> userRoleLambda = new LambdaQueryWrapper<UserRole>()
                 .eq(UserRole::getUserId,reqvo.getId());
         UserRole userRole = userRoleRepository.getOne(userRoleLambda);
-        Long userRoleid = userRole.getId();
-        userRepository.removeById(userid);
-        userRoleRepository.removeById(userRoleid);
-        return Boolean.TRUE;
+        if (userRole!=null){
+            Long userRoleid = userRole.getId();
+            userRepository.removeById(userid);
+            userRoleRepository.removeById(userRoleid);
+            return Boolean.TRUE;
+        }else {
+            return Boolean.TRUE;
+        }
+
     }
 
     @Override

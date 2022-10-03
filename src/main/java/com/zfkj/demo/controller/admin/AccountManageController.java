@@ -72,7 +72,7 @@ public class AccountManageController {
 
     @ApiOperation(value = "重置密码", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @PostMapping("/resetPassword")
-    public Result<Boolean> resetPassword(RePassAccountVo reqVo){
+    public Result<Boolean> resetPassword(@RequestBody RePassAccountVo reqVo){
         return Result.success(accountManageService.resetPassword(reqVo));
     }
 }

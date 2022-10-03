@@ -1,10 +1,13 @@
 package com.zfkj.demo.vo.reqvo.companyIntro;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class saveIntroReVo {
     private Long id;
     private String name;

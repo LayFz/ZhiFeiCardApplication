@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class introRespVo {
     private Integer id;
     private String name;
+    private String content;
     private LocalDateTime creatime;
     private String adminName;
 }
