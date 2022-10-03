@@ -208,6 +208,7 @@ public class AccountServiceImpl implements AccountManageService {
             userRoleRepository.removeById(userRoleid);
             return Boolean.TRUE;
         }else {
+            userRepository.removeById(userid);
             return Boolean.TRUE;
         }
 
