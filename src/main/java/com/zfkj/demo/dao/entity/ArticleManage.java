@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @TableName("article")
 public class ArticleManage extends BaseEntity {
-
+    private Long id;
     private String name;
     private Long classifyId;
     private int viewNumber;
