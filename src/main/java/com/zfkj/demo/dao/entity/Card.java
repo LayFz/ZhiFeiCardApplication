@@ -7,19 +7,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@TableName("article")
-public class ArticleManage extends BaseEntity {
-
+@NoArgsConstructor
+@TableName("card")
+public class Card extends BaseEntity {
     private String name;
-    private Long classifyId;
-    private int viewNumber;
-    private int falseNumber;
-    private String content;
-    private String headImg;
+    private String email;
+    private String wechatnumber;
+    private String wechatcardurl;
+    private String job;
+    private String perFilePic;
+    private String perFileContent;
+
 
 
 }
