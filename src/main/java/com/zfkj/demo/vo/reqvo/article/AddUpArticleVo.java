@@ -6,11 +6,17 @@ import lombok.Data;
 @Data
 @Builder
 public class AddUpArticleVo {
-    private Long id;
+    //文章id
+    private int id;
+    //分类id
+    private Long class_id;
+    //标题
     private String name;
-    private String classIf;
+    //基础浏览量
     private int falseNumber;
+    //标题图片
     private String headImg;
+    //正文
     private String content;
 
 }

@@ -64,7 +64,6 @@ public class BannerServiceImpl implements BannerService {
                 banner.setName(ReVo.getName());
                 banner.setCompanyId(companyid);
                 banner.setImgUrl(ReVo.getImgUrl());
-                banner.setIsVaild(ReVo.getIsVaild());
                 banner.setRemark("个性化简介");
                 bannerRepository.saveOrUpdate(banner);
                 return Boolean.TRUE;
@@ -107,7 +106,6 @@ public class BannerServiceImpl implements BannerService {
                 banner.setName(ReVo.getName());
                 banner.setCompanyId(companyid);
                 banner.setImgUrl(ReVo.getImgUrl());
-                banner.setIsVaild(ReVo.getIsVaild());
                 banner.setRemark("个性化内容");
                 bannerRepository.saveOrUpdate(banner);
                 return Boolean.TRUE;
@@ -116,5 +114,63 @@ public class BannerServiceImpl implements BannerService {
             System.out.println("您已到期！");
             return Boolean.TRUE;
         }
+    }
+
+    @Override
+    public List<Banner> getBanners() {
+        //获取当前登录用户的角色集合
+        UserInfoVO loginUser = userUtil.getLoginUser();
+        //获取旗下公司
+        LambdaQueryWrapper<Company> companyLambdaQueryWrapper = new LambdaQueryWrapper<Company>()
+                .eq(Company::getUserId, loginUser.getId());
+        Company company = companyRepository.getOne(companyLambdaQueryWrapper);
+        //根据公司id获取banner
+        LambdaQueryWrapper<Banner> bannerLambdaQueryWrapper = new LambdaQueryWrapper<Banner>()
+                .eq(Banner::getCompanyId, company.getId());
+        return bannerRepository.list(bannerLambdaQueryWrapper);
+    }
+
+    @Override
+    public Boolean ChangeIntroBanner() {
+        //获取当前登录用户的角色集合
+        UserInfoVO loginUser = userUtil.getLoginUser();
+        //获取旗下公司
+        LambdaQueryWrapper<Company> companyLambdaQueryWrapper = new LambdaQueryWrapper<Company>()
+                .eq(Company::getUserId, loginUser.getId());
+        Company company = companyRepository.getOne(companyLambdaQueryWrapper);
+        LambdaQueryWrapper<Banner> bannerLambdaQueryWrapper = new LambdaQueryWrapper<Banner>()
+                .eq(Banner::getCompanyId, company.getId())
+                .eq(Banner::getRemark,"个性化简介");
+        Banner banner = bannerRepository.getOne(bannerLambdaQueryWrapper);
+        String temp = banner.getIsVaild().getCode();
+        if (temp.equals("OPEN")){
+            banner.setIsVaild(OpenCloseEnum.CLOSE);
+        }else {
+            banner.setIsVaild(OpenCloseEnum.OPEN);
+        }
+        bannerRepository.saveOrUpdate(banner);
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean changeContentBanner() {
+        //获取当前登录用户的角色集合
+        UserInfoVO loginUser = userUtil.getLoginUser();
+        //获取旗下公司
+        LambdaQueryWrapper<Company> companyLambdaQueryWrapper = new LambdaQueryWrapper<Company>()
+                .eq(Company::getUserId, loginUser.getId());
+        Company company = companyRepository.getOne(companyLambdaQueryWrapper);
+        LambdaQueryWrapper<Banner> bannerLambdaQueryWrapper = new LambdaQueryWrapper<Banner>()
+                .eq(Banner::getCompanyId, company.getId())
+                .eq(Banner::getRemark,"个性化内容");
+        Banner banner = bannerRepository.getOne(bannerLambdaQueryWrapper);
+        String temp = banner.getIsVaild().getCode();
+        if (temp.equals("OPEN")){
+            banner.setIsVaild(OpenCloseEnum.CLOSE);
+        }else {
+            banner.setIsVaild(OpenCloseEnum.OPEN);
+        }
+        bannerRepository.saveOrUpdate(banner);
+        return Boolean.TRUE;
     }
 }

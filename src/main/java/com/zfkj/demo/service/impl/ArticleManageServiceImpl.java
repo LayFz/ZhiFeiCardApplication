@@ -158,16 +158,15 @@ public class ArticleManageServiceImpl implements ArticleManageService {
         //系统时间
         long nowTime = System.currentTimeMillis();
         if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
-            //根据classify 查询classifyId;
             LambdaQueryWrapper<ArticleClassify> articleClassifLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassify>()
-                    .eq(ArticleClassify::getName,reVo.getClassIf());
-            Long classifId = articleClassifyRepository.getOne(articleClassifLambdaQueryWrapper).getId();
+                    .eq(ArticleClassify::getId,reVo.getClass_id());
+            long classifId = articleClassifyRepository.getOne(articleClassifLambdaQueryWrapper).getId();
             ArticleManage articleManage = ArticleManage.builder().build();
-            articleManage.setId(reVo.getId());
             articleManage.setClassifyId(classifId);
             articleManage.setName(reVo.getName());
             articleManage.setHeadImg(reVo.getHeadImg());
             articleManage.setFalseNumber(reVo.getFalseNumber());
+            articleManage.setViewNumber(reVo.getFalseNumber()+1);
             articleManage.setContent(reVo.getContent());
             articleManageRepository.save(articleManage);
            return Boolean.TRUE;
@@ -190,18 +189,14 @@ public class ArticleManageServiceImpl implements ArticleManageService {
         //系统时间
         long nowTime = System.currentTimeMillis();
         if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
-            //根据classify 查询classifyId;
-            LambdaQueryWrapper<ArticleClassify> articleClassifLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassify>()
-                    .eq(ArticleClassify::getName,reVo.getClassIf());
-            Long classifId = articleClassifyRepository.getOne(articleClassifLambdaQueryWrapper).getId();
-            ArticleManage articleManage = ArticleManage.builder().build();
-            articleManage.setId(reVo.getId());
-            articleManage.setClassifyId(classifId);
+            LambdaQueryWrapper<ArticleManage> articleManageLambdaQueryWrapper = new LambdaQueryWrapper<ArticleManage>()
+                    .eq(ArticleManage::getId, reVo.getId());
+            ArticleManage articleManage = articleManageRepository.getOne(articleManageLambdaQueryWrapper);
+            articleManage.setClassifyId(reVo.getClass_id());
             articleManage.setName(reVo.getName());
             articleManage.setHeadImg(reVo.getHeadImg());
             articleManage.setFalseNumber(reVo.getFalseNumber());
             articleManage.setContent(reVo.getContent());
-
             articleManageRepository.saveOrUpdate(articleManage);
             return Boolean.TRUE;
         }else {

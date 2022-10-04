@@ -10,5 +10,4 @@ public class SaveBannerVo {
     private Long id;
     private String imgUrl;
     private String name;
-    private OpenCloseEnum isVaild;
 }
