@@ -1,5 +1,7 @@
 package com.zfkj.demo.service;
 
+import com.zfkj.demo.dao.entity.Article;
+import com.zfkj.demo.dao.entity.ArticleManage;
 import com.zfkj.demo.vo.reqvo.article.AddUpArticleVo;
 import com.zfkj.demo.vo.reqvo.article.DelArticleVo;
 import com.zfkj.demo.vo.reqvo.article.ArticleReqVo;
@@ -21,7 +23,7 @@ public interface ArticleManageService {
     /**
      * 查询文章
      */
-    List<ArticleReqVo> selectArticle(articleByVo ByVo);
+    List<ArticleManage> selectArticle(String search);
 
     /**
      * 添加文章
@@ -36,5 +38,12 @@ public interface ArticleManageService {
     /**
      * 删除文章
      */
-    Boolean DelArticle(DelArticleVo reVo);
+    Boolean DelArticle(AddUpArticleVo reVo);
+
+    /**
+     * 根据id获取文章
+     * @param id
+     * @return
+     */
+    ArticleManage getArticleById(long id);
 }

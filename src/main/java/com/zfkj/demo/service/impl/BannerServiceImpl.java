@@ -173,4 +173,12 @@ public class BannerServiceImpl implements BannerService {
         bannerRepository.saveOrUpdate(banner);
         return Boolean.TRUE;
     }
+
+    @Override
+    public List<Banner> getBannersById(int id) {
+        LambdaQueryWrapper<Banner> bannerLambdaQueryWrapper = new LambdaQueryWrapper<Banner>()
+                .eq(Banner::getCompanyId,id)
+                .eq(Banner::getIsVaild, OpenCloseEnum.OPEN);
+        return bannerRepository.list(bannerLambdaQueryWrapper);
+    }
 }

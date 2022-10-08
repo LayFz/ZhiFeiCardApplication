@@ -90,22 +90,38 @@ public class CompanyIntroServiceImpl implements CompanyIntroService {
             LambdaQueryWrapper<CompanyIntro> classifLambda = new LambdaQueryWrapper<CompanyIntro>()
                     .eq(CompanyIntro::getCompanyId,company.getId())
                     .orderBy(true,false,CompanyIntro::getLevel);
-            int level = introRepository.list(classifLambda).get(0).getLevel();
+            if (introRepository.list(classifLambda).size()!=0){
+                int level = introRepository.list(classifLambda).get(0).getLevel();
 
-            LambdaQueryWrapper<Banner> bannerLambda = new LambdaQueryWrapper<Banner>()
-                    .and(i->i.eq(Banner::getCompanyId,company.getId()).eq(Banner::getRemark,"个性化简介"));
-            Banner banner = bannerRepository.getOne(bannerLambda);
-            Long bannerId = banner.getId();
+                LambdaQueryWrapper<Banner> bannerLambda = new LambdaQueryWrapper<Banner>()
+                        .and(i->i.eq(Banner::getCompanyId,company.getId()).eq(Banner::getRemark,"个性化简介"));
+                Banner banner = bannerRepository.getOne(bannerLambda);
+                Long bannerId = banner.getId();
 
-            CompanyIntro companyIntro = CompanyIntro.builder().build();
-            companyIntro.setCompanyId(company.getId());
-            companyIntro.setBelongBannerId(bannerId);
-            companyIntro.setName(reVo.getName());
-            companyIntro.setContent(reVo.getContent());
-            companyIntro.setLevel(level+1);
+                CompanyIntro companyIntro = CompanyIntro.builder().build();
+                companyIntro.setCompanyId(company.getId());
+                companyIntro.setBelongBannerId(bannerId);
+                companyIntro.setName(reVo.getName());
+                companyIntro.setContent(reVo.getContent());
+                companyIntro.setLevel(level+1);
 
-            introRepository.save(companyIntro);
-            return Boolean.TRUE;
+                introRepository.save(companyIntro);
+                return Boolean.TRUE;
+            }else {
+                LambdaQueryWrapper<Banner> bannerLambda = new LambdaQueryWrapper<Banner>()
+                        .and(i->i.eq(Banner::getCompanyId,company.getId()).eq(Banner::getRemark,"个性化简介"));
+                Banner banner = bannerRepository.getOne(bannerLambda);
+                Long bannerId = banner.getId();
+                CompanyIntro companyIntro = CompanyIntro.builder().build();
+                companyIntro.setCompanyId(company.getId());
+                companyIntro.setBelongBannerId(bannerId);
+                companyIntro.setName(reVo.getName());
+                companyIntro.setContent(reVo.getContent());
+                companyIntro.setLevel(0);
+                introRepository.save(companyIntro);
+                return Boolean.TRUE;
+            }
+
         }else {
             System.out.println("您已到期！");
             return Boolean.FALSE;

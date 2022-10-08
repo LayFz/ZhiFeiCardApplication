@@ -18,7 +18,7 @@ import java.util.List;
  * @version 1.0
  * @date 2022/9/19 12:36
  */
-@Api(tags = "前端系统-上传留言板-前端页面")
+@Api(tags = "MINI小程序-留言板-首页")
 @RestController
 @RequestMapping("/api/user")
 public class BoardController {

@@ -3,6 +3,7 @@ package com.zfkj.demo.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zfkj.demo.common.enums.OpenCloseEnum;
 import com.zfkj.demo.common.utils.AesUtil;
+import com.zfkj.demo.dao.entity.Banner;
 import com.zfkj.demo.dao.entity.Company;
 import com.zfkj.demo.dao.entity.User;
 import com.zfkj.demo.dao.entity.UserRole;
@@ -36,6 +37,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     UserRoleRepository userRoleRepository;
+    @Autowired
+    BannerRepository bannerRepository;
 
 
 
@@ -85,6 +88,24 @@ public class CompanyServiceImpl implements CompanyService {
                 reqVo.setUserId(user.getId().intValue());
                 reqVo.setIsVaild(OpenCloseEnum.OPEN);
                 companyRepository.saveOrUpdate(reqVo);
+                /**
+                 * 添加默认banner
+                 */
+                LambdaQueryWrapper<Company> companyLambdaQueryWrapper1 = new LambdaQueryWrapper<Company>()
+                        .eq(Company::getPhone,reqVo.getPhone());
+                Company company = companyRepository.getOne(companyLambdaQueryWrapper1);
+                Banner banner_intro = Banner.builder().build();
+                Banner banner_content = Banner.builder().build();
+                banner_intro.setCompanyId(company.getId());
+                banner_intro.setIsVaild(OpenCloseEnum.OPEN);
+                banner_intro.setRemark("个性化简介");
+                banner_intro.setName("个性化简介");
+                banner_content.setCompanyId(company.getId());
+                banner_content.setIsVaild(OpenCloseEnum.OPEN);
+                banner_content.setRemark("个性化内容");
+                banner_content.setName("个性化内容");
+                bannerRepository.save(banner_intro);
+                bannerRepository.save(banner_content);
                 return Boolean.TRUE;
             }else {
                 /**

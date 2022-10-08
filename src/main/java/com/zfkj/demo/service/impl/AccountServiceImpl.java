@@ -88,7 +88,11 @@ public class AccountServiceImpl implements AccountManageService {
             LambdaQueryWrapper<User> userLambda = new LambdaQueryWrapper<User>()
                     .eq(User::getPhone,reVo)
                     .or()
-                    .eq(User::getName,reVo);
+                    .eq(User::getName,reVo)
+                    .or()
+                    .eq(User::getAccount,reVo)
+                    .or()
+                    .eq(User::getRemark,reVo);
             List<User> userList = userRepository.list(userLambda);
             List<accountRespVo> resultList  = new ArrayList<>();
             for (int i=0;i<userList.size();i++){

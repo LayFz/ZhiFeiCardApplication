@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class AddUpArticleVo {
     //文章id
-    private int id;
+    private long id;
     //分类id
     private Long class_id;
     //标题

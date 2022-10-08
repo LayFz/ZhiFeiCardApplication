@@ -2,6 +2,7 @@ package com.zfkj.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zfkj.demo.common.utils.SystemUserUtil;
+import com.zfkj.demo.dao.entity.Article;
 import com.zfkj.demo.dao.entity.ArticleClassify;
 import com.zfkj.demo.dao.entity.ArticleManage;
 import com.zfkj.demo.dao.entity.Company;
@@ -89,7 +90,7 @@ public class ArticleManageServiceImpl implements ArticleManageService {
      * 查询
      */
     @Override
-    public List<ArticleReqVo> selectArticle(articleByVo ByVo) {
+    public List<ArticleManage> selectArticle(String search) {
         //获取当前登录用户的角色集合
         UserInfoVO loginUser = userUtil.getLoginUser();
         //查询公司是否可用并且是否到期
@@ -101,43 +102,10 @@ public class ArticleManageServiceImpl implements ArticleManageService {
         //系统时间
         long nowTime = System.currentTimeMillis();
         if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
-            //根据classify 查询classifyId;
-            LambdaQueryWrapper<ArticleClassify> articleClassifLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassify>()
-                    .eq(ArticleClassify::getName,ByVo.getClassif());
-            Long classifId = articleClassifyRepository.getOne(articleClassifLambdaQueryWrapper).getId();
-
-            //根据管理员id获取article表相关数据
-            LambdaQueryWrapper<ArticleManage> articleLambda = new LambdaQueryWrapper<ArticleManage>()
-                    .eq(ArticleManage::getId,ByVo.getId())
-                    .or().eq(ArticleManage::getName,ByVo.getName())
-                    .or().eq(ArticleManage::getClassifyId,classifId);
-            List<ArticleManage> articleList = articleManageRepository.list(articleLambda);
-            //根据
-            List<ArticleReqVo> articleReqVoList = new ArrayList<>();
-            ArticleReqVo reqVo = ArticleReqVo.builder().build();
-            for (int i=0;i<articleList.size();i++){
-                reqVo.setId(articleList.get(i).getId());
-                reqVo.setName(articleList.get(i).getName());
-                LambdaQueryWrapper<ArticleClassify> articleClassifLambda = new LambdaQueryWrapper<ArticleClassify>()
-                        .eq(ArticleClassify::getId,articleList.get(i).getClassifyId());
-                ArticleClassify articleClassif = articleClassifyRepository.getOne(articleClassifLambda);
-
-                String classifName = articleClassif.getName();
-                reqVo.setClassif(classifName);
-                reqVo.setTrueNumber(articleList.get(i).getViewNumber());
-                int number =articleList.get(i).getViewNumber()+ articleList.get(i).getFalseNumber();
-                reqVo.setFalsenumber(number);
-                reqVo.setCreateName(loginUser.getName());
-                reqVo.setCreatetime(articleList.get(i).getCreateTime());
-
-                articleReqVoList.add(reqVo);
-
-
-            }
-
-            return articleReqVoList;
-
-
+            LambdaQueryWrapper<ArticleManage> articleManageLambdaQueryWrapper = new LambdaQueryWrapper<ArticleManage>()
+                    .eq(ArticleManage::getCreateId, loginUser.getId())
+                    .like(ArticleManage::getName, search);
+            return articleManageRepository.list(articleManageLambdaQueryWrapper);
         }else {
             System.out.println("您已到期！");
             return null;
@@ -206,13 +174,31 @@ public class ArticleManageServiceImpl implements ArticleManageService {
     }
 
     @Override
-    public Boolean DelArticle(DelArticleVo reVo) {
-        LambdaQueryWrapper<ArticleManage> articleManageLambda = new
-                LambdaQueryWrapper<ArticleManage>().eq(ArticleManage::getId,reVo.getId());
-
-        ArticleManage articleManage = articleManageRepository.getOne(articleManageLambda);
-        Long id = articleManage.getId();
-        articleManageRepository.removeById(id);
+    public Boolean DelArticle(AddUpArticleVo reVo) {
+        articleManageRepository.removeById(reVo.getId());
         return Boolean.TRUE;
+    }
+
+    @Override
+    public ArticleManage getArticleById(long id) {
+        //获取当前登录用户的角色集合
+        UserInfoVO loginUser = userUtil.getLoginUser();
+        //查询公司是否可用并且是否到期
+        LambdaQueryWrapper<Company> companyLambdaQueryWrapper = new LambdaQueryWrapper<Company>()
+                .eq(Company::getUserId, loginUser.getId());
+        Company company = companyRepository.getOne(companyLambdaQueryWrapper);
+        //到期时间
+        long vaildTime = company.getValidData().getTime();
+        //系统时间
+        long nowTime = System.currentTimeMillis();
+        if (nowTime < vaildTime&&company.getIsVaild().getCode().equals("OPEN")){
+            LambdaQueryWrapper<ArticleManage> articleManageLambdaQueryWrapper = new LambdaQueryWrapper<ArticleManage>()
+                    .eq(ArticleManage::getId, id)
+                    .eq(ArticleManage::getCreateId,loginUser.getId());
+            return articleManageRepository.getOne(articleManageLambdaQueryWrapper);
+        }else {
+            System.out.println("您已到期！");
+            return null;
+        }
     }
 }

@@ -3,6 +3,8 @@ package com.zfkj.demo.controller.admin;
 
 import com.zfkj.demo.common.constant.ApiTextHelperConstant;
 import com.zfkj.demo.common.constant.DeveloperConstant;
+import com.zfkj.demo.dao.entity.Article;
+import com.zfkj.demo.dao.entity.ArticleManage;
 import com.zfkj.demo.service.ArticleManageService;
 import com.zfkj.demo.vo.basevo.Result;
 import com.zfkj.demo.vo.reqvo.article.AddUpArticleVo;
@@ -30,10 +32,16 @@ public class ArticleManageController {
         return Result.success(articleManageService.getArticleData());
     }
 
+    @ApiOperation(value = "根据id获取文章", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.LIUJIE)
+    @GetMapping("/getArticleById")
+    public Result<ArticleManage> getArticleList(@RequestParam("id") long id){
+        return Result.success(articleManageService.getArticleById(id));
+    }
+
     @ApiOperation(value = "查询文章", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
-    @PostMapping("/selectArticleList")
-    public Result<List<ArticleReqVo>> SelectArticleList(@RequestBody articleByVo ByVo){
-        return Result.success(articleManageService.selectArticle(ByVo));
+    @GetMapping("/selectArticleList")
+    public Result<List<ArticleManage>> SelectArticleList(@RequestParam("search_key") String search){
+        return Result.success(articleManageService.selectArticle(search));
     }
 
 
@@ -51,7 +59,7 @@ public class ArticleManageController {
 
     @ApiOperation(value = "删除文章", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @PostMapping("/deleteArticle")
-    public Result<Boolean> DeleteArticle(@RequestBody DelArticleVo reVo){
+    public Result<Boolean> DeleteArticle(@RequestBody AddUpArticleVo reVo){
         return Result.success(articleManageService.DelArticle(reVo));
     }
 }

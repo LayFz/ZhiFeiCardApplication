@@ -88,13 +88,24 @@ public class ArticleClassifyServiceImpl implements ArticleClassifyService {
             LambdaQueryWrapper<ArticleClassify> classifLambda = new LambdaQueryWrapper<ArticleClassify>()
                     .eq(ArticleClassify::getCompanyId,company.getId())
                     .orderBy(true,false, ArticleClassify::getLevel);
-            int level = articleClassifyRepository.list(classifLambda).get(0).getLevel();
-            ArticleClassify articleClassif = ArticleClassify.builder().build();
-            articleClassif.setCompanyId(company.getId());
-            articleClassif.setName(reVo.getName());
-            articleClassif.setLevel(level+1);
-            articleClassifyRepository.save(articleClassif);
-            return Boolean.TRUE;
+            if (articleClassifyRepository.list(classifLambda).size()!=0){
+                int level = articleClassifyRepository.list(classifLambda).get(0).getLevel();
+                ArticleClassify articleClassif = ArticleClassify.builder().build();
+                articleClassif.setCompanyId(company.getId());
+                articleClassif.setName(reVo.getName());
+                articleClassif.setLevel(level+1);
+                articleClassifyRepository.save(articleClassif);
+                return Boolean.TRUE;
+            }else {
+                ArticleClassify articleClassif = ArticleClassify.builder().build();
+                articleClassif.setCompanyId(company.getId());
+                articleClassif.setName(reVo.getName());
+                articleClassif.setLevel(0);
+                articleClassifyRepository.save(articleClassif);
+                return Boolean.TRUE;
+            }
+
+
         }else {
             System.out.println("您已到期！");
             return Boolean.FALSE;

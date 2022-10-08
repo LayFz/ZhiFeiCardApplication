@@ -23,4 +23,6 @@ public interface BannerService {
     Boolean ChangeIntroBanner();
 
     Boolean changeContentBanner();
+
+    List<Banner> getBannersById(int id);
 }

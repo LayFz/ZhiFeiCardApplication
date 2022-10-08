@@ -11,10 +11,7 @@ import com.zfkj.demo.vo.reqvo.banner.SaveBannerVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,13 +36,13 @@ public class BannerController {
     }
 
     @ApiOperation(value = "开启关闭个性化简介配置", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
-    @PostMapping("/changeIntroBanner")
+    @GetMapping("/changeIntroBanner")
     public Result<Boolean> ChangeIntroBanner(){
         return Result.success(bannerService.ChangeIntroBanner());
     }
 
     @ApiOperation(value = "开启关闭化内容配置", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
-    @PostMapping("/changeContentBanner")
+    @GetMapping("/changeContentBanner")
     public Result<Boolean> ChangeContentBanner(){
         return Result.success(bannerService.changeContentBanner());
     }
@@ -53,7 +50,7 @@ public class BannerController {
 
 
     @ApiOperation(value = "获取Banner的信息", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.LIUJIE)
-    @PostMapping("/getBanners")
+    @GetMapping("/getBanners")
     public Result<List<Banner>> SaveContentBanner(){
         return Result.success(bannerService.getBanners());
     }
