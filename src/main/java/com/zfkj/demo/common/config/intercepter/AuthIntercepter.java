@@ -60,11 +60,11 @@ public class AuthIntercepter implements HandlerInterceptor {
         // 校验该接口是否需要登录 但不需要配置api权限的
         String requestURI = request.getRequestURI();
         List<String> tokenurls = ignoreConfig.tokenurls;
-        boolean checkUrl = true;
+        boolean checkUrl = false;
         for (String url:tokenurls){
             //当前请求url如果在登录后的白名单中，则放行。不在则校验权限url
             if (pathMatcher.match(url, requestURI)) {
-                checkUrl = false;
+                checkUrl = true;
                 break;
             }
         }

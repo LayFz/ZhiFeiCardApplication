@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 public class CardDate {
     @TableId(type = IdType.AUTO)
     private Long id;
-
     private Integer cardId;
     private int viewNumber;
     private int cusNumber;

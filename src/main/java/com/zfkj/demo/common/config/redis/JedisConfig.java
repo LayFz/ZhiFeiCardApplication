@@ -23,7 +23,7 @@ public class JedisConfig {
     @Value("${spring.redis.port}")
     private int port;
 
-//    @Value("${spring.redis.password}")
+    @Value("${spring.redis.password}")
 //    @Value()
     private String password;
 
