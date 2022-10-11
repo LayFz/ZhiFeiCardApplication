@@ -143,7 +143,6 @@ public class CardServiceImpl implements CardService {
                 if (judgeCusStaffUtil.isRelevant(staffId,userId)){
                     System.out.println("员工用户有联系");
                     customerDateService.addVisitNum(userId);
-
                     LambdaQueryWrapper<StaffCustomer> staffCustomerLambda = new LambdaQueryWrapper<StaffCustomer>()
                             .eq(StaffCustomer::getUser_id,staffId)
                             .eq(StaffCustomer::getCus_id,userId);
@@ -201,6 +200,23 @@ public class CardServiceImpl implements CardService {
         }else {
             System.out.println("管理员");
             return null;
+        }
+        return null;
+    }
+
+    @Override
+    public List<CardRespVo> returnCardBy() {
+        String phone = systemUserUtil.getLoginUser().getPhone();
+        int userId = systemUserUtil.getLoginUser().getId().intValue();
+        if (judgeRoleUtil.judgeRole(phone)!=null&&judgeRoleUtil.judgeRole(phone).equals("员工")){
+                LambdaQueryWrapper<CardDate> cardDateLambda = new LambdaQueryWrapper<CardDate>()
+                        .eq(CardDate::getUserId,userId);
+                CardDate cardDate  = cardDateRepository.getOne(cardDateLambda);
+                if (cardDate!=null){
+                    int cardId = cardDate.getCardId();
+                    return getCard(cardId);
+                }
+                return null;
         }
         return null;
     }

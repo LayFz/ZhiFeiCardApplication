@@ -31,4 +31,10 @@ public class IntroductController {
     public Result<Boolean> saveCardIntro(@RequestBody SaveCardIntroReVo reVo){
         return Result.success(cardService.saveIntroduct(reVo));
     }
+
+    @ApiOperation(value = "返回员工简介", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
+    @GetMapping("/returnCard")
+    public Result<List<CardRespVo>> returnCard(){
+        return Result.success(cardService.returnCardBy());
+    }
 }

@@ -16,6 +16,8 @@ public interface CardService {
 
     //返回名片
     List<CardRespVo> returnCard(int id);
+    //根据登录userid获取名片card
+    List<CardRespVo> returnCardBy();
 
 //    /**
 //     * 保存名片
