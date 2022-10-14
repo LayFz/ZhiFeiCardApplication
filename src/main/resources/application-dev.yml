@@ -80,6 +80,13 @@ filesave:
 ignore:
   # 白名单，不需要登录即可访问
   urls:
+    - /api/manager/articlemanage/getArticleById
+    - /api/manager/articlemanage/deleteArticle
+    - /api/manager/articlemanage/addArticle
+    - /api/manager/account/getAccountList
+    - /api/manager/companyIntro/upLevel
+    - /api/manager/companyIntro/getIntroList
+    - /api/manager/companyIntro/delIntro
     - /api/user/register
     - /api/user/getboard
     - /api/manager/getCode
@@ -98,6 +105,9 @@ ignore:
     - /excel/**
   # 白名单，需要登录，但不需要分配权限即可访问
   tokenurls:
+    - /api/user/getBanners
+    - /api/user/card/getCard
+    - /api/user/mini/count/savaCard
     - /api/manager/article/select
     - /api/user/saveboard
     - /api/manager/logout

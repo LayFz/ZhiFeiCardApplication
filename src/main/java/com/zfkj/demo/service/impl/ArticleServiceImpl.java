@@ -1,7 +1,9 @@
 package com.zfkj.demo.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zfkj.demo.dao.entity.*;
+import com.zfkj.demo.dao.repository.ArticleManageRepository;
 import com.zfkj.demo.dao.repository.ArticleRepository;
 import com.zfkj.demo.service.ArticleService;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +22,9 @@ import java.util.List;
 public class ArticleServiceImpl implements ArticleService {
     @Autowired
     ArticleRepository articleRepository;
+
+    @Autowired
+    ArticleManageRepository articleManageRepository;
 
 
 
@@ -49,6 +54,20 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<Article> selectArticle() {
         return articleRepository.list();
+    }
+
+    @Override
+    public List<ArticleManage> getArticleListById(Integer classfy_id) {
+        LambdaQueryWrapper<ArticleManage> articleLambdaQueryWrapper = new LambdaQueryWrapper<ArticleManage>()
+                .eq(ArticleManage::getClassifyId, classfy_id);
+        return articleManageRepository.list(articleLambdaQueryWrapper);
+    }
+
+    @Override
+    public ArticleManage getArticleById(Integer article_id) {
+        LambdaQueryWrapper<ArticleManage> articleLambdaQueryWrapper = new LambdaQueryWrapper<ArticleManage>()
+                .eq(ArticleManage::getClassifyId, article_id);
+        return articleManageRepository.getOne(articleLambdaQueryWrapper);
     }
 
 

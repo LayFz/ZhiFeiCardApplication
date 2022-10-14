@@ -1,14 +1,11 @@
 package com.zfkj.demo.common.utils;
 
-import cn.hutool.system.UserInfo;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.zfkj.demo.dao.entity.Role;
+
 import com.zfkj.demo.vo.respvo.role.RoleRespVo;
 import com.zfkj.demo.vo.respvo.user.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**

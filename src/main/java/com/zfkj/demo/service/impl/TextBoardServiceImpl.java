@@ -112,6 +112,7 @@ public class TextBoardServiceImpl implements TextBoardService {
 
     @Override
     public List<TextBoard> selectResponse() {
+
         LambdaQueryWrapper<TextBoard> re = new LambdaQueryWrapper<TextBoard>()
                 .eq(TextBoard::getIspublic,"YES")
                 .isNotNull(TextBoard::getRescontent)

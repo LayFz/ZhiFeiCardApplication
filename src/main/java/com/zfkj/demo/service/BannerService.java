@@ -24,5 +24,5 @@ public interface BannerService {
 
     Boolean changeContentBanner();
 
-    List<Banner> getBannersById(int id);
+    List<Banner> getBannersById(Integer id);
 }

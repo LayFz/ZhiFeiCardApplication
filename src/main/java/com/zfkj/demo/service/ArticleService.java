@@ -1,6 +1,7 @@
 package com.zfkj.demo.service;
 
 import com.zfkj.demo.dao.entity.Article;
+import com.zfkj.demo.dao.entity.ArticleManage;
 
 import java.util.List;
 
@@ -29,6 +30,18 @@ public interface ArticleService {
      */
     List<Article> selectArticle();
 
+    /**
+     * 根据分类查询文章列表
+     * @param classfy_id
+     * @return
+     */
 
+    List<ArticleManage> getArticleListById(Integer classfy_id);
 
+    /**
+     * 根据文章id查询文章
+     * @param article_id
+     * @return
+     */
+    ArticleManage getArticleById(Integer article_id);
 }

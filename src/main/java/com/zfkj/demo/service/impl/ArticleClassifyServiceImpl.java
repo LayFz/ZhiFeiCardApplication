@@ -1,12 +1,14 @@
 package com.zfkj.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.zfkj.demo.common.utils.MiniRoleUtils;
 import com.zfkj.demo.common.utils.SystemUserUtil;
-import com.zfkj.demo.dao.entity.ArticleClassify;
+import com.zfkj.demo.dao.entity.*;
 
-import com.zfkj.demo.dao.entity.Company;
 import com.zfkj.demo.dao.repository.ArticleClassifyRepository;
+import com.zfkj.demo.dao.repository.CardDateRepository;
 import com.zfkj.demo.dao.repository.CompanyRepository;
+import com.zfkj.demo.dao.repository.OrganizationRepository;
 import com.zfkj.demo.service.ArticleClassifyService;
 
 import com.zfkj.demo.vo.reqvo.articleClassify.delArcClassifyId;
@@ -14,6 +16,7 @@ import com.zfkj.demo.vo.reqvo.articleClassify.saveArcClassifyReVo;
 import com.zfkj.demo.vo.reqvo.articleClassify.upDownArcClassifyReVo;
 import com.zfkj.demo.vo.respvo.articleClassify.articleClassifyRespVo;
 import com.zfkj.demo.vo.respvo.user.UserInfoVO;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,19 @@ public class ArticleClassifyServiceImpl implements ArticleClassifyService {
 
     @Autowired
     ArticleClassifyRepository articleClassifyRepository;
+
+    @Autowired
+    MiniRoleUtils miniRoleUtils;
+
+    @Autowired
+    CardDateRepository cardDateRepository;
+
+    @Autowired
+    OrganizationRepository organizationRepository;
+
+
+
+
 
 
     @Override
@@ -208,5 +224,57 @@ public class ArticleClassifyServiceImpl implements ArticleClassifyService {
             System.out.println("您已到期！");
             return Boolean.FALSE;
         }
+    }
+
+    @Override
+    public List<ArticleClassify> getContentTitle(Integer card_id) {
+        UserInfoVO userInfoVO = userUtil.getLoginUser();
+        /*
+         * 用户
+         */
+        //1.获取用户身份
+        Boolean isCustermor = miniRoleUtils.isCustomer();
+        Boolean isStaff = miniRoleUtils.isStaff();
+        if (isCustermor) {
+            // 客户调用逻辑
+            LambdaQueryWrapper<CardDate> cardDateLambdaQueryWrapper = new LambdaQueryWrapper<CardDate>()
+                    .eq(CardDate::getCardId, card_id);
+            CardDate cardDate = cardDateRepository.getOne(cardDateLambdaQueryWrapper);
+            // 组织id
+            int organize_id = cardDate.getChildId();
+            LambdaQueryWrapper<Organize> organizeLambdaQueryWrapper = new LambdaQueryWrapper<Organize>()
+                    .eq(Organize::getChildId, organize_id);
+            Organize organize = organizationRepository.getOne(organizeLambdaQueryWrapper);
+            // 公司id
+            int company_id = organize.getCompanyId();
+            LambdaQueryWrapper<ArticleClassify> articleClassifyLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassify>()
+                    .eq(ArticleClassify::getCompanyId, company_id);
+            return articleClassifyRepository.list(articleClassifyLambdaQueryWrapper);
+        } else {
+            /*
+             * 员工
+             */
+            if (isStaff) {
+                // 员工调用
+                // 员工id
+                int user_id = userInfoVO.getId().intValue();
+                //
+                LambdaQueryWrapper<CardDate> cardDateLambdaQueryWrapper = new LambdaQueryWrapper<CardDate>()
+                        .eq(CardDate::getUserId, user_id);
+                CardDate cardDate = cardDateRepository.getOne(cardDateLambdaQueryWrapper);
+                int organize_id = cardDate.getChildId();
+                // 组织id
+                LambdaQueryWrapper<Organize> organizeLambdaQueryWrapper = new LambdaQueryWrapper<Organize>()
+                        .eq(Organize::getChildId, organize_id);
+                Organize organize = organizationRepository.getOne(organizeLambdaQueryWrapper);
+                // 公司id
+                int company_id = organize.getCompanyId();
+                LambdaQueryWrapper<ArticleClassify> articleClassifyLambdaQueryWrapper = new LambdaQueryWrapper<ArticleClassify>()
+                        .eq(ArticleClassify::getCompanyId, company_id);
+                return articleClassifyRepository.list(articleClassifyLambdaQueryWrapper);
+            }
+        }
+        System.out.println("身份校验失败");
+        return null;
     }
 }

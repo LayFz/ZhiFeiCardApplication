@@ -1,5 +1,6 @@
 package com.zfkj.demo.service;
 
+import com.zfkj.demo.dao.entity.ArticleClassify;
 import com.zfkj.demo.dao.entity.CompanyIntro;
 import com.zfkj.demo.vo.reqvo.companyIntro.delIntroReVo;
 import com.zfkj.demo.vo.reqvo.companyIntro.saveIntroReVo;
@@ -20,4 +21,11 @@ public interface CompanyIntroService {
     Boolean upIntroLevel(upDownIntroReVo reVo);
 
     Boolean downIntroLevel(upDownIntroReVo reVo);
+
+    /**
+     * 获取公司简介信息
+     * @return
+     */
+    List<CompanyIntro> getIntroTitle(Integer card_id);
+
 }

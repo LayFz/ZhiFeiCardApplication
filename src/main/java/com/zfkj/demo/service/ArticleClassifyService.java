@@ -21,4 +21,6 @@ public interface ArticleClassifyService {
     Boolean upLevel(upDownArcClassifyReVo reVo);
 
     Boolean DownLevel(upDownArcClassifyReVo reVo);
+
+    List<ArticleClassify> getContentTitle(Integer card_id);
 }

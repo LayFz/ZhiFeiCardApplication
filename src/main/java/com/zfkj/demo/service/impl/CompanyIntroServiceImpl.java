@@ -1,13 +1,10 @@
 package com.zfkj.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.zfkj.demo.common.utils.MiniRoleUtils;
 import com.zfkj.demo.common.utils.SystemUserUtil;
-import com.zfkj.demo.dao.entity.Banner;
-import com.zfkj.demo.dao.entity.Company;
-import com.zfkj.demo.dao.entity.CompanyIntro;
-import com.zfkj.demo.dao.repository.BannerRepository;
-import com.zfkj.demo.dao.repository.CompanyIntroRepository;
-import com.zfkj.demo.dao.repository.CompanyRepository;
+import com.zfkj.demo.dao.entity.*;
+import com.zfkj.demo.dao.repository.*;
 import com.zfkj.demo.service.CompanyIntroService;
 import com.zfkj.demo.vo.reqvo.companyIntro.delIntroReVo;
 import com.zfkj.demo.vo.reqvo.companyIntro.saveIntroReVo;
@@ -33,6 +30,22 @@ public class CompanyIntroServiceImpl implements CompanyIntroService {
 
     @Autowired
     BannerRepository bannerRepository;
+
+    @Autowired
+    SystemUserUtil systemUserUtil;
+
+    @Autowired
+    MiniRoleUtils miniRoleUtils;
+
+    @Autowired
+    CardDateRepository cardDateRepository;
+
+    @Autowired
+    OrganizationRepository organizationRepository;
+
+    @Autowired
+    CompanyIntroRepository companyIntroRepository;
+
 
     @Override
     public List<introRespVo> getCompanyIntroList() {
@@ -237,5 +250,62 @@ public class CompanyIntroServiceImpl implements CompanyIntroService {
             System.out.println("您已到期！");
             return Boolean.FALSE;
         }
+    }
+
+    @Override
+    public List<CompanyIntro> getIntroTitle(Integer card_id) throws RuntimeException{
+        try{
+            UserInfoVO userInfoVO = systemUserUtil.getLoginUser();
+            /*
+             * 用户
+             */
+            //1.获取用户身份
+
+            Boolean isCustermor = miniRoleUtils.isCustomer();
+            Boolean isStaff = miniRoleUtils.isStaff();
+            if (isCustermor){
+                // 客户调用逻辑
+                LambdaQueryWrapper<CardDate> cardDateLambdaQueryWrapper = new LambdaQueryWrapper<CardDate>()
+                        .eq(CardDate::getCardId, card_id);
+                CardDate cardDate = cardDateRepository.getOne(cardDateLambdaQueryWrapper);
+                // 组织id
+                int organize_id = cardDate.getChildId();
+                LambdaQueryWrapper<Organize> organizeLambdaQueryWrapper = new LambdaQueryWrapper<Organize>()
+                        .eq(Organize::getChildId,organize_id);
+                Organize organize = organizationRepository.getOne(organizeLambdaQueryWrapper);
+                // 公司id
+                int company_id = organize.getCompanyId();
+                LambdaQueryWrapper<CompanyIntro> companyIntroLambdaQueryWrapper = new LambdaQueryWrapper<CompanyIntro>()
+                        .eq(CompanyIntro::getCompanyId, company_id);
+                return companyIntroRepository.list(companyIntroLambdaQueryWrapper);
+            }else {
+                /*
+                 * 员工
+                 */
+                if (isStaff){
+                    // 员工调用
+                    // 员工id
+                    int user_id = userInfoVO.getId().intValue();
+                    //
+                    LambdaQueryWrapper<CardDate> cardDateLambdaQueryWrapper = new LambdaQueryWrapper<CardDate>()
+                            .eq(CardDate::getUserId, user_id);
+                    CardDate cardDate = cardDateRepository.getOne(cardDateLambdaQueryWrapper);
+                    int organize_id = cardDate.getChildId();
+                    // 组织id
+                    LambdaQueryWrapper<Organize> organizeLambdaQueryWrapper = new LambdaQueryWrapper<Organize>()
+                            .eq(Organize::getChildId,organize_id);
+                    Organize organize = organizationRepository.getOne(organizeLambdaQueryWrapper);
+                    // 公司id
+                    int company_id = organize.getCompanyId();
+                    LambdaQueryWrapper<CompanyIntro> companyIntroLambdaQueryWrapper = new LambdaQueryWrapper<CompanyIntro>()
+                            .eq(CompanyIntro::getCompanyId, company_id);
+                    return companyIntroRepository.list(companyIntroLambdaQueryWrapper);
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 }

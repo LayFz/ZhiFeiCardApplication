@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @TableName("user_customer")
 public class RealationShip {
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Integer id;
     private int user_id;
     private int cus_id;
     private int interaction_num;

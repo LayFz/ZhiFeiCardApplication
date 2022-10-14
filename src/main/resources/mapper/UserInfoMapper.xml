@@ -18,12 +18,13 @@
         <result column="update_id" property="updateId" />
         <result column="update_time" property="updateTime" />
         <result column="address" property="address" />
+        <result column="last_login" property="lastLogin" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id,
-        name, account, phone, password, age, sex, remark, status, create_id, create_time, update_id, update_time, address
+        name, account, phone, password, age, sex, remark, status, create_id, create_time, update_id, update_time, address, last_login
     </sql>
 
     <select id="queryUser" resultType="com.zfkj.demo.vo.respvo.user.QueryUserRespVo">

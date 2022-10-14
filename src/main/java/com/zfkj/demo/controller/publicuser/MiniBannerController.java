@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Api(tags = "MINI小程序-获取Banner-首页")
 @RestController
-@RequestMapping("/api/user/")
+@RequestMapping("/api/user")
 public class MiniBannerController {
     @Autowired
     BannerService bannerService;
@@ -30,7 +30,7 @@ public class MiniBannerController {
 
     @ApiOperation(value = "获取Banner的信息", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.LIUJIE)
     @GetMapping("/getBanners")
-    public Result<List<Banner>> SaveContentBanner(@RequestParam("company_id")int id){
+    public Result<List<Banner>> SaveContentBanner(@RequestParam(value = "company_id", required = false)Integer id){
         return Result.success(bannerService.getBannersById(id));
     }
 }

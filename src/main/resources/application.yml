@@ -1,7 +1,7 @@
 spring:
   # 环境 dev|test|prod
   profiles:
-    active: prod
+    active: dev
   mvc:
     pathmatch:
       #解决swagger 3.0访问问题：Springfox使用的路径匹配是基于AntPathMatcher的，而Spring Boot 2.6.X使用的是PathPatternMatcher

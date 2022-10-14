@@ -2,12 +2,14 @@ package com.zfkj.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zfkj.demo.common.enums.OpenCloseEnum;
+import com.zfkj.demo.common.utils.MiniRoleUtils;
 import com.zfkj.demo.common.utils.SystemUserUtil;
 
-import com.zfkj.demo.dao.entity.Banner;
-import com.zfkj.demo.dao.entity.Company;
+import com.zfkj.demo.dao.entity.*;
 import com.zfkj.demo.dao.repository.BannerRepository;
+import com.zfkj.demo.dao.repository.CardDateRepository;
 import com.zfkj.demo.dao.repository.CompanyRepository;
+import com.zfkj.demo.dao.repository.OrganizationRepository;
 import com.zfkj.demo.service.BannerService;
 import com.zfkj.demo.vo.reqvo.banner.SaveBannerVo;
 import com.zfkj.demo.vo.respvo.user.UserInfoVO;
@@ -26,6 +28,20 @@ public class BannerServiceImpl implements BannerService {
 
     @Autowired
     BannerRepository bannerRepository;
+
+    @Autowired
+    SystemUserUtil systemUserUtil;
+
+    @Autowired
+    MiniRoleUtils miniRoleUtils;
+
+    @Autowired
+    CardDateRepository cardDateRepository;
+
+    @Autowired
+    OrganizationRepository organizationRepository;
+
+
 
     /**
      * 个性化简介配置
@@ -175,10 +191,31 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
-    public List<Banner> getBannersById(int id) {
-        LambdaQueryWrapper<Banner> bannerLambdaQueryWrapper = new LambdaQueryWrapper<Banner>()
-                .eq(Banner::getCompanyId,id)
-                .eq(Banner::getIsVaild, OpenCloseEnum.OPEN);
-        return bannerRepository.list(bannerLambdaQueryWrapper);
+    public List<Banner> getBannersById(Integer id) {
+        Boolean flag = miniRoleUtils.isStaff();
+        UserInfoVO userInfoVO = systemUserUtil.getLoginUser();
+        if (!flag){
+            LambdaQueryWrapper<Banner> bannerLambdaQueryWrapper = new LambdaQueryWrapper<Banner>()
+                    .eq(Banner::getCompanyId,id)
+                    .eq(Banner::getIsVaild, OpenCloseEnum.OPEN);
+            return bannerRepository.list(bannerLambdaQueryWrapper);
+        }else {
+            LambdaQueryWrapper<CardDate> cardDateLambdaQueryWrapper = new LambdaQueryWrapper<CardDate>()
+                    .eq(CardDate::getUserId,userInfoVO.getId());
+            CardDate cardDate = cardDateRepository.getOne(cardDateLambdaQueryWrapper);
+            int origin_id = cardDate.getChildId();
+            LambdaQueryWrapper<Organize> organizeLambdaQueryWrapper = new LambdaQueryWrapper<Organize>()
+                    .eq(Organize::getId,origin_id);
+            Organize organize = organizationRepository.getOne(organizeLambdaQueryWrapper);
+            int company_id = organize.getCompanyId();
+
+
+
+            LambdaQueryWrapper<Banner> bannerLambdaQueryWrapper = new LambdaQueryWrapper<Banner>()
+                    .eq(Banner::getCompanyId,company_id)
+                    .eq(Banner::getIsVaild, OpenCloseEnum.OPEN);
+            return bannerRepository.list(bannerLambdaQueryWrapper);
+        }
+
     }
 }
