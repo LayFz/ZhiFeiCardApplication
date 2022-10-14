@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @TableName("user_customer")
@@ -25,4 +27,6 @@ public class StaffCustomer {
     //活跃数
     @TableField("interaction_num")
     private int interaction_num;
+    @TableField("create_time")
+    private LocalDateTime createTime;
 }
