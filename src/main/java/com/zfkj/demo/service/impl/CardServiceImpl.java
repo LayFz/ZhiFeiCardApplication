@@ -131,71 +131,89 @@ public class CardServiceImpl implements CardService {
      * @return
      */
     @Override
-    public List<CardRespVo> returnCard(int id) {
+    public List<CardRespVo> returnCard(Integer id) {
         String phone = systemUserUtil.getLoginUser().getPhone();
         int userId = systemUserUtil.getLoginUser().getId().intValue();
-
-        int staffId = getstaffId(id);
+        String cardId = String.valueOf(id);
         if(judgeRoleUtil.judgeRole(phone)==null){
-            System.out.println("客户");
-            if (judgeRoleUtil.notNull(id)){
-                addViewNum(id);
-                if (judgeCusStaffUtil.isRelevant(staffId,userId)){
-                    System.out.println("员工用户有联系");
-                    customerDateService.addVisitNum(userId);
-                    LambdaQueryWrapper<StaffCustomer> staffCustomerLambda = new LambdaQueryWrapper<StaffCustomer>()
-                            .eq(StaffCustomer::getUser_id,staffId)
-                            .eq(StaffCustomer::getCus_id,userId);
-                    int staffCusId = staffCustomerRepository.getOne(staffCustomerLambda).getId().intValue();
+            if (!cardId.equals("")){
+              return null;
+            }else {
+                int staffId = getstaffId(id);
+                System.out.println("客户");
+                if (judgeRoleUtil.notNull(id)){
+                    addViewNum(id);
+                    if (judgeCusStaffUtil.isRelevant(staffId,userId)){
+                        System.out.println("员工用户有联系");
+                        customerDateService.addVisitNum(userId);
+                        LambdaQueryWrapper<StaffCustomer> staffCustomerLambda = new LambdaQueryWrapper<StaffCustomer>()
+                                .eq(StaffCustomer::getUser_id,staffId)
+                                .eq(StaffCustomer::getCus_id,userId);
+                        int staffCusId = staffCustomerRepository.getOne(staffCustomerLambda).getId().intValue();
 
-                    if (judgeCusStaffUtil.isExclusive(userId)){
-                        System.out.println("非专属员工1");
-                        staffCustomerService.addInteractionNum(staffCusId);
+                        if (judgeCusStaffUtil.isExclusive(userId)){
+                            System.out.println("非专属员工1");
+                            staffCustomerService.addInteractionNum(staffCusId);
+                        }else {
+                            System.out.println("专属员工1");
+                            LambdaQueryWrapper<CustomerDate> customerDateLambda = new LambdaQueryWrapper<CustomerDate>()
+                                    .eq(CustomerDate::getCusId,userId);
+                            int cusId = customerDateRepository.getOne(customerDateLambda).getId().intValue();
+
+                            customerDateService.addExclusive(cusId,id);
+
+                            staffCustomerService.addInteractionNum(staffCusId);
+                        }
+                        return getCard(id);
                     }else {
-                        System.out.println("专属员工1");
-                        LambdaQueryWrapper<CustomerDate> customerDateLambda = new LambdaQueryWrapper<CustomerDate>()
-                                .eq(CustomerDate::getCusId,userId);
-                        int cusId = customerDateRepository.getOne(customerDateLambda).getId().intValue();
+                        System.out.println("员工用户没有联系");
+                        customerDateService.addVisitNum(userId);
 
-                        customerDateService.addExclusive(cusId,id);
+                        staffCustomerService.addContact(staffId,userId);
 
-                        staffCustomerService.addInteractionNum(staffCusId);
+                        LambdaQueryWrapper<StaffCustomer> staffCustomerLambda = new LambdaQueryWrapper<StaffCustomer>()
+                                .eq(StaffCustomer::getUser_id,staffId)
+                                .eq(StaffCustomer::getCus_id,userId);
+                        int staffCusId = staffCustomerRepository.getOne(staffCustomerLambda).getId().intValue();
+
+                        customerDateService.addVisitNum(userId);
+
+                        if (judgeCusStaffUtil.isExclusive(userId)){
+                            System.out.println("非专属员工2");
+                            staffCustomerService.addInteractionNum(staffCusId);
+                        }else {
+                            System.out.println("专属员工2");
+                            LambdaQueryWrapper<CustomerDate> customerDateLambda = new LambdaQueryWrapper<CustomerDate>()
+                                    .eq(CustomerDate::getCusId,userId);
+                            int cusId = customerDateRepository.getOne(customerDateLambda).getId().intValue();
+                            customerDateService.addExclusive(cusId,id);
+                            staffCustomerService.addInteractionNum(staffCusId);
+                        }
+                        return getCard(id);
                     }
-                    return getCard(id);
-                }else {
-                    System.out.println("员工用户没有联系");
-                    customerDateService.addVisitNum(userId);
-
-                    staffCustomerService.addContact(staffId,userId);
-
-                    LambdaQueryWrapper<StaffCustomer> staffCustomerLambda = new LambdaQueryWrapper<StaffCustomer>()
-                            .eq(StaffCustomer::getUser_id,staffId)
-                            .eq(StaffCustomer::getCus_id,userId);
-                    int staffCusId = staffCustomerRepository.getOne(staffCustomerLambda).getId().intValue();
-
-                    customerDateService.addVisitNum(userId);
-
-                    if (judgeCusStaffUtil.isExclusive(userId)){
-                        System.out.println("非专属员工2");
-                        staffCustomerService.addInteractionNum(staffCusId);
-                    }else {
-                        System.out.println("专属员工2");
-                        LambdaQueryWrapper<CustomerDate> customerDateLambda = new LambdaQueryWrapper<CustomerDate>()
-                                .eq(CustomerDate::getCusId,userId);
-                        int cusId = customerDateRepository.getOne(customerDateLambda).getId().intValue();
-                        customerDateService.addExclusive(cusId,id);
-                        staffCustomerService.addInteractionNum(staffCusId);
-                    }
-                    return getCard(id);
                 }
             }
         }else if (judgeRoleUtil.judgeRole(phone).equals("员工")){
-            if (judgeRoleUtil.notNull(id)){
-                if (judgeRoleUtil.staffHimself(phone)){
-                    System.out.println("员工本人");
-                    addViewNum(id);
+            System.out.println("cardId:"+cardId);
+            if (!cardId.equals("")){
+                LambdaQueryWrapper<CardDate> cardDateLambda = new LambdaQueryWrapper<CardDate>()
+                        .eq(CardDate::getUserId,userId);
+                int card = cardDateRepository.getOne(cardDateLambda).getCardId();
+                if (judgeRoleUtil.notNull(card)){
+                    if (judgeRoleUtil.staffHimself(phone)){
+                        System.out.println("员工本人");
+                        addViewNum(card);
+                    }
+                    return getCard(card);
                 }
-                return getCard(id);
+            }else{
+                if (judgeRoleUtil.notNull(id)){
+                    if (judgeRoleUtil.staffHimself(phone)){
+                        System.out.println("员工本人");
+                        addViewNum(id);
+                    }
+                    return getCard(id);
+                }
             }
         }else {
             System.out.println("管理员");
