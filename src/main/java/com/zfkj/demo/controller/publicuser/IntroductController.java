@@ -22,7 +22,7 @@ public class IntroductController {
     CardService cardService;
     @ApiOperation(value = "获取员工简介", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @GetMapping("/getCard")
-    public Result<List<CardRespVo>> getCard(@RequestParam("cardId") int id){
+    public Result<List<CardRespVo>> getCard(@RequestParam(value = "cardId" ,required = false) Integer id){
         return Result.success(cardService.returnCard(id));
     }
 
