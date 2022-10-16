@@ -16,7 +16,7 @@ import java.util.List;
 
 @Api(tags = "MINI -名片管理-首页")
 @RestController
-@RequestMapping("/api/card")
+@RequestMapping("/api/user/card")
 public class IntroductController {
     @Autowired
     CardService cardService;

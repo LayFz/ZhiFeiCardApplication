@@ -39,4 +39,8 @@ public class TextBoard extends BaseEntity {
      * 留言回复信息
      */
     private String rescontent;
+    /**
+     * 属于谁的id
+     */
+    private Integer belong_id;
 }

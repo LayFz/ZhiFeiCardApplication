@@ -2,6 +2,10 @@ package com.zfkj.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mysql.cj.util.StringUtils;
+import com.zfkj.demo.common.exception.BusinessException;
+import com.zfkj.demo.common.exception.BusinessExceptionAdvice;
+import com.zfkj.demo.common.exception.BusinessRootRuntimeException;
+import com.zfkj.demo.common.exception.Exceptions;
 import com.zfkj.demo.dao.entity.Role;
 import com.zfkj.demo.dao.entity.TextBoard;
 import com.zfkj.demo.dao.repository.TextBoardRepository;
@@ -24,17 +28,19 @@ import java.util.List;
 public class TextBoardServiceImpl implements TextBoardService {
     @Autowired
     TextBoardRepository textBoardRepository;
+
+
     @Override
-    public Boolean saveboard(TextBoard reqVo) {
-        if (reqVo.getContent()!=null&&reqVo.getSex()!=null&&reqVo.getNickname()!=null&&reqVo.getIspublic()!=null){
+    public Boolean saveboard(TextBoard reqVo) throws BusinessRootRuntimeException{
+        if (reqVo.getContent()!=null&&reqVo.getSex()!=null&&reqVo.getNickname()!=null&&reqVo.getIspublic()!=null&&reqVo.getBelong_id()!=null){
             TextBoard textBoard = TextBoard.builder().build();
             BeanUtils.copyProperties(reqVo,textBoard);
+
             textBoardRepository.saveOrUpdate(textBoard);
             return Boolean.TRUE;
         }else {
-            return Boolean.FALSE;
+            throw new BusinessRootRuntimeException(Exceptions.Common.PARAMTER_IS_ERROR);
         }
-
     }
 
     @Override
