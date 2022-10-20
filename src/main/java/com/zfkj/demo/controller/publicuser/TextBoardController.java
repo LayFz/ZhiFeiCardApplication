@@ -1,4 +1,4 @@
-package com.zfkj.demo.controller.admin;
+package com.zfkj.demo.controller.publicuser;
 
 import com.zfkj.demo.common.constant.ApiTextHelperConstant;
 import com.zfkj.demo.common.constant.DeveloperConstant;
@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -20,11 +21,18 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/manager/board")
-@Api(tags = "后台管理系-留言板管理-后台管理")
+@Api(tags = "MINI小程序-员工管理-留言管理")
 @AllArgsConstructor
 public class TextBoardController {
     @Autowired
     TextBoardService boardService;
+
+
+    @ApiOperation(value = "获取留言板概况信息", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.LIUJIE)
+    @GetMapping("/total")
+    public Result<HashMap<String,String>>getBoardDate(){
+        return Result.success(boardService.getBoardDate());
+    }
 
     @ApiOperation(value = "回复留言板", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.LIUJIE)
     @PostMapping("/response")
