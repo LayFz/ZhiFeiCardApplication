@@ -271,7 +271,7 @@ public class CompanyIntroServiceImpl implements CompanyIntroService {
                 // 组织id
                 int organize_id = cardDate.getChildId();
                 LambdaQueryWrapper<Organize> organizeLambdaQueryWrapper = new LambdaQueryWrapper<Organize>()
-                        .eq(Organize::getChildId,organize_id);
+                        .eq(Organize::getId,organize_id);
                 Organize organize = organizationRepository.getOne(organizeLambdaQueryWrapper);
                 // 公司id
                 int company_id = organize.getCompanyId();
@@ -293,7 +293,7 @@ public class CompanyIntroServiceImpl implements CompanyIntroService {
                     int organize_id = cardDate.getChildId();
                     // 组织id
                     LambdaQueryWrapper<Organize> organizeLambdaQueryWrapper = new LambdaQueryWrapper<Organize>()
-                            .eq(Organize::getChildId,organize_id);
+                            .eq(Organize::getId,organize_id);
                     Organize organize = organizationRepository.getOne(organizeLambdaQueryWrapper);
                     // 公司id
                     int company_id = organize.getCompanyId();

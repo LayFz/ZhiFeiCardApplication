@@ -15,7 +15,7 @@ public interface CardService {
     int getstaffId(int id);
 
     //返回名片
-    List<CardRespVo> returnCard(int id);
+    List<CardRespVo> returnCard(Integer id);
     //根据登录userid获取名片card
     List<CardRespVo> returnCardBy();
 

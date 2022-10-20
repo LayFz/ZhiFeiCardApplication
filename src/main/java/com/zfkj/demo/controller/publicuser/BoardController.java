@@ -27,7 +27,7 @@ public class BoardController {
 
     @ApiOperation(value = "提交留言", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.LIUJIE)
     @PostMapping("/saveboard")
-    public Result<Boolean> saveBoard(@RequestBody TextBoard reqVo){
+    public Result<Boolean> saveBoard(@RequestBody TextBoard reqVo) {
         return Result.success(textBoardService.saveboard(reqVo));
     }
 

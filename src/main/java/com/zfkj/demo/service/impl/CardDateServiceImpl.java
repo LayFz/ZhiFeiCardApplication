@@ -1,10 +1,9 @@
 package com.zfkj.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.zfkj.demo.common.utils.MiniRoleUtils;
 import com.zfkj.demo.common.utils.SystemUserUtil;
-import com.zfkj.demo.dao.entity.Card;
+
 import com.zfkj.demo.dao.entity.CardDate;
 import com.zfkj.demo.dao.entity.RealationShip;
 import com.zfkj.demo.dao.repository.CardDateRepository;
