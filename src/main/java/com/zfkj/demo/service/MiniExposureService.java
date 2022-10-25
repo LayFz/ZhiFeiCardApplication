@@ -14,11 +14,12 @@ public interface MiniExposureService {
     //日均停留处理
     String ave_stay(int a,int b,int c);
     HashMap<String, String> visitorProfile();
-    HashMap<String, String> sevenTrend();
+//    HashMap<String, String> sevenTrend();
     HashMap<String,String> cumulativeDate(String startTime,String endTime);
     HashMap<String,String>  averageDate(String startTime,String endTime);
 
     List<MiniExResVo> miniExposureList(String startTime,String endTime);
+    List<MiniExResVo> sevenTrend();
 
 
 }

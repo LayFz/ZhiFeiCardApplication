@@ -24,11 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 @Service
@@ -87,65 +83,65 @@ public class MiniExposureServiceImpl implements MiniExposureService {
         return null;
     }
 
-    @Override
-    public HashMap<String, String> sevenTrend() {
-        UserInfoVO user = systemUserUtil.getLoginUser();
-        int userId = user.getId().intValue();
-        Boolean isStaff = miniRoleUtils.isStaff();
-        if (isStaff){
-            //今日访客数，近一天访客总数，近两天访客总数。。。
-            LambdaQueryWrapper<StaffCusVisit> todayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-                    .eq(StaffCusVisit::getStaffId,userId)
-                    .apply("DATE_SUB(CURDATE(), INTERVAL 0 DAY) <= date(visit_time)");
-            LambdaQueryWrapper<StaffCusVisit> onedayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-                    .eq(StaffCusVisit::getStaffId,userId)
-                    .apply("DATE_SUB(CURDATE(), INTERVAL 1 DAY) <= date(visit_time)");
-            LambdaQueryWrapper<StaffCusVisit> twodayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-                    .eq(StaffCusVisit::getStaffId,userId)
-                    .apply("DATE_SUB(CURDATE(), INTERVAL 2 DAY) <= date(visit_time)");
-            LambdaQueryWrapper<StaffCusVisit> threedayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-                    .eq(StaffCusVisit::getStaffId,userId)
-                    .apply("DATE_SUB(CURDATE(), INTERVAL 3 DAY) <= date(visit_time)");
-            LambdaQueryWrapper<StaffCusVisit> fourdayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-                    .eq(StaffCusVisit::getStaffId,userId)
-                    .apply("DATE_SUB(CURDATE(), INTERVAL 4 DAY) <= date(visit_time)");
-            LambdaQueryWrapper<StaffCusVisit> fivedayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-                    .eq(StaffCusVisit::getStaffId,userId)
-                    .apply("DATE_SUB(CURDATE(), INTERVAL 5 DAY) <= date(visit_time)");
-            LambdaQueryWrapper<StaffCusVisit> sixdayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-                    .eq(StaffCusVisit::getStaffId,userId)
-                    .apply("DATE_SUB(CURDATE(), INTERVAL 6 DAY) <= date(visit_time)");
-
-            long todayNum = staffCusVisitRepository.count(todayLambda);
-            long onedayNum = staffCusVisitRepository.count(onedayLambda);
-            long twodayNum = staffCusVisitRepository.count(twodayLambda);
-            long threedayNum = staffCusVisitRepository.count(threedayLambda);
-            long fourdayNum = staffCusVisitRepository.count(fourdayLambda);
-            long fivedayNum = staffCusVisitRepository.count(fivedayLambda);
-            long sixdayNum = staffCusVisitRepository.count(sixdayLambda);
-
-            //计算前一天，前两天访客数，以此类推
-            long ago_one = onedayNum - todayNum;
-            long ago_two = twodayNum - onedayNum;
-            long ago_three = threedayNum - twodayNum;
-            long ago_four = fourdayNum - threedayNum;
-            long ago_five = fivedayNum - fourdayNum;
-            long ago_six = sixdayNum - fivedayNum;
-
-            HashMap<String,String> re = new HashMap<>();
-
-            re.put("today",String.valueOf(todayNum));
-            re.put("ago_oneday",String.valueOf(ago_one));
-            re.put("ago_twoday",String.valueOf(ago_two));
-            re.put("ago_threeday",String.valueOf(ago_three));
-            re.put("ago_fourday",String.valueOf(ago_four));
-            re.put("ago_fiveday",String.valueOf(ago_five));
-            re.put("ago_sixday",String.valueOf(ago_six));
-
-            return  re;
-        }
-        return null;
-    }
+//    @Override
+//    public HashMap<String, String> sevenTrend() {
+//        UserInfoVO user = systemUserUtil.getLoginUser();
+//        int userId = user.getId().intValue();
+//        Boolean isStaff = miniRoleUtils.isStaff();
+//        if (isStaff){
+//            //今日访客数，近一天访客总数，近两天访客总数。。。
+//            LambdaQueryWrapper<StaffCusVisit> todayLambda = new LambdaQueryWrapper<StaffCusVisit>()
+//                    .eq(StaffCusVisit::getStaffId,userId)
+//                    .apply("DATE_SUB(CURDATE(), INTERVAL 0 DAY) <= date(visit_time)");
+//            LambdaQueryWrapper<StaffCusVisit> onedayLambda = new LambdaQueryWrapper<StaffCusVisit>()
+//                    .eq(StaffCusVisit::getStaffId,userId)
+//                    .apply("DATE_SUB(CURDATE(), INTERVAL 1 DAY) <= date(visit_time)");
+//            LambdaQueryWrapper<StaffCusVisit> twodayLambda = new LambdaQueryWrapper<StaffCusVisit>()
+//                    .eq(StaffCusVisit::getStaffId,userId)
+//                    .apply("DATE_SUB(CURDATE(), INTERVAL 2 DAY) <= date(visit_time)");
+//            LambdaQueryWrapper<StaffCusVisit> threedayLambda = new LambdaQueryWrapper<StaffCusVisit>()
+//                    .eq(StaffCusVisit::getStaffId,userId)
+//                    .apply("DATE_SUB(CURDATE(), INTERVAL 3 DAY) <= date(visit_time)");
+//            LambdaQueryWrapper<StaffCusVisit> fourdayLambda = new LambdaQueryWrapper<StaffCusVisit>()
+//                    .eq(StaffCusVisit::getStaffId,userId)
+//                    .apply("DATE_SUB(CURDATE(), INTERVAL 4 DAY) <= date(visit_time)");
+//            LambdaQueryWrapper<StaffCusVisit> fivedayLambda = new LambdaQueryWrapper<StaffCusVisit>()
+//                    .eq(StaffCusVisit::getStaffId,userId)
+//                    .apply("DATE_SUB(CURDATE(), INTERVAL 5 DAY) <= date(visit_time)");
+//            LambdaQueryWrapper<StaffCusVisit> sixdayLambda = new LambdaQueryWrapper<StaffCusVisit>()
+//                    .eq(StaffCusVisit::getStaffId,userId)
+//                    .apply("DATE_SUB(CURDATE(), INTERVAL 6 DAY) <= date(visit_time)");
+//
+//            long todayNum = staffCusVisitRepository.count(todayLambda);
+//            long onedayNum = staffCusVisitRepository.count(onedayLambda);
+//            long twodayNum = staffCusVisitRepository.count(twodayLambda);
+//            long threedayNum = staffCusVisitRepository.count(threedayLambda);
+//            long fourdayNum = staffCusVisitRepository.count(fourdayLambda);
+//            long fivedayNum = staffCusVisitRepository.count(fivedayLambda);
+//            long sixdayNum = staffCusVisitRepository.count(sixdayLambda);
+//
+//            //计算前一天，前两天访客数，以此类推
+//            long ago_one = onedayNum - todayNum;
+//            long ago_two = twodayNum - onedayNum;
+//            long ago_three = threedayNum - twodayNum;
+//            long ago_four = fourdayNum - threedayNum;
+//            long ago_five = fivedayNum - fourdayNum;
+//            long ago_six = sixdayNum - fivedayNum;
+//
+//            HashMap<String,String> re = new HashMap<>();
+//
+//            re.put("today",String.valueOf(todayNum));
+//            re.put("ago_oneday",String.valueOf(ago_one));
+//            re.put("ago_twoday",String.valueOf(ago_two));
+//            re.put("ago_threeday",String.valueOf(ago_three));
+//            re.put("ago_fourday",String.valueOf(ago_four));
+//            re.put("ago_fiveday",String.valueOf(ago_five));
+//            re.put("ago_sixday",String.valueOf(ago_six));
+//
+//            return  re;
+//        }
+//        return null;
+//    }
 
     @Override
     public HashMap<String, String> cumulativeDate(String startTime, String endTime) {
@@ -434,6 +430,72 @@ public class MiniExposureServiceImpl implements MiniExposureService {
                 miniExResVo.setMailNum(0);
                 miniExResVo.setTextBoardNum(0);
                 re.add(miniExResVo);
+            }
+            return re;
+        }
+        return null;
+    }
+
+    @Override
+    public List<MiniExResVo> sevenTrend() {
+        UserInfoVO user = systemUserUtil.getLoginUser();
+        int userId = user.getId().intValue();
+        Boolean isStaff = miniRoleUtils.isStaff();
+        if (isStaff){
+            //现在时间
+            //获取当前日期时间
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String endTime = sdf.format(System.currentTimeMillis());
+            System.out.println("结束时间："+endTime);
+
+            //获取七天前的日期
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) - 6);
+            String startTime = sdf.format(calendar.getTime());
+            System.out.println("结束时间："+startTime);
+
+            List<String> timeList = TimeUtil.getDate(startTime,endTime);
+            System.out.println("TimeList:"+timeList);
+            List<MiniExResVo> re = new ArrayList<>();
+            for(int i = 0;i< timeList.size();i++){
+                LambdaQueryWrapper<StaffCusVisit> staffCusVisitLambda = new LambdaQueryWrapper<StaffCusVisit>()
+                        .eq(StaffCusVisit::getStaffId,userId)
+                        .likeRight(true,StaffCusVisit::getVisitTime,timeList.get(i));
+                LambdaQueryWrapper<StaffCusSave> staffCusSaveLambda = new LambdaQueryWrapper<StaffCusSave>()
+                        .eq(StaffCusSave::getStaffId,userId)
+                        .likeRight(true,StaffCusSave::getSaveTime,timeList.get(i));
+                LambdaQueryWrapper<StaffCusMail> staffCusMailLambda = new LambdaQueryWrapper<StaffCusMail>()
+                        .eq(StaffCusMail::getStaffId,userId)
+                        .likeRight(true,StaffCusMail::getMailTime,timeList.get(i));
+                LambdaQueryWrapper<TextBoard> textBoardLambda = new LambdaQueryWrapper<TextBoard>()
+                        .eq(TextBoard::getBelongId,userId)
+                        .likeRight(true,TextBoard::getCreateTime,timeList.get(i));
+                //计算所有用户停留的总时长
+                QueryWrapper<StaffCusVisit> stayTimeWrapper = new QueryWrapper<>();
+                stayTimeWrapper.select(" IFNULL(SUM(stay_time),0) as total")
+                        .eq("staff_id",userId)
+                        .likeRight(true,"visit_time",timeList.get(i));
+
+                Map<String,Object> map = staffCusVisitRepository.getMap(stayTimeWrapper);
+                BigDecimal countStayTime = (BigDecimal) map.get("total");
+
+
+                long visitNum = staffCusVisitRepository.count(staffCusVisitLambda);
+                long saveNum = staffCusSaveRepository.count(staffCusSaveLambda);
+                long mailNum = staffCusMailRepository.count(staffCusMailLambda);
+                long textBoardNum = textBoardRepository.count(textBoardLambda);
+                String total_ave_Staytime = ave(countStayTime.intValue(),Math.toIntExact(visitNum));
+
+                MiniExResVo miniExResVo = MiniExResVo.builder().build();
+                miniExResVo.setDayTime(timeList.get(i));
+                miniExResVo.setVisitNum(Math.toIntExact(visitNum));
+                miniExResVo.setAveNum(total_ave_Staytime);
+                miniExResVo.setSaveNum(Math.toIntExact(saveNum));
+                miniExResVo.setMailNum(Math.toIntExact(mailNum));
+                miniExResVo.setTextBoardNum(Math.toIntExact(textBoardNum));
+
+                re.add(miniExResVo);
+
             }
             return re;
         }
