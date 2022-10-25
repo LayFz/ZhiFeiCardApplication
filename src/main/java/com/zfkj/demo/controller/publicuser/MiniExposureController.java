@@ -34,7 +34,7 @@ public class MiniExposureController {
 
     @ApiOperation(value = "获取近七日访客趋势概况", notes = ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
     @GetMapping("/sevenTrend")
-    public Result<HashMap<String,String>> sevenTrend(){
+    public Result<List<MiniExResVo>> sevenTrend(){
         return Result.success(miniExposureService.sevenTrend());
     }
 
