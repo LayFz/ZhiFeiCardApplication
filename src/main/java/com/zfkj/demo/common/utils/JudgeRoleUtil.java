@@ -27,7 +27,7 @@ public class JudgeRoleUtil {
     UserRoleRepository userRoleRepository;
 
     /**
-     * 判断cardId是否为空
+     * 判断card是否为空
      * @param cardId
      * @return
      */
