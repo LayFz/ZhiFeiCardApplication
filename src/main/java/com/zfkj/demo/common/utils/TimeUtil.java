@@ -39,8 +39,35 @@ public class TimeUtil {
             return list;
         }
 
+        public static List<String> getMonth(String startMonth,String endMonth){
+            //定义时间格式
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+            List<String> list = new ArrayList<>();
+            try {
+                // 转化成日期类型
+                Date startDate = simpleDateFormat.parse(startMonth);
+                Date endDate = simpleDateFormat.parse(endMonth);
+
+                //用Calendar 进行日期比较判断
+                Calendar calendar = Calendar.getInstance();
+                while (startDate.getTime()<=endDate.getTime()){
+                    // 把日期添加到集合
+                    list.add(simpleDateFormat.format(startDate));
+                    // 设置日期
+                    calendar.setTime(startDate);
+                    //把日期增加一分
+                    calendar.add(Calendar.MONTH, 1);
+                    // 获取增加后的日期
+                    startDate=calendar.getTime();
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return list;
+        }
+
         public static void main(String[] args) {
-            List<String> betweenDate = getDate("2022-10-13", "2022-10-20");
+            List<String> betweenDate = getMonth("2022-01-11", "2022-10-23");
             System.out.println(betweenDate);
         }
     }
