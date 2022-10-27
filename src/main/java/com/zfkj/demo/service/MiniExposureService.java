@@ -21,5 +21,7 @@ public interface MiniExposureService {
     List<MiniExResVo> miniExposureList(String startTime,String endTime);
     List<MiniExResVo> sevenTrend();
 
+    HashMap<String,String> todaySituation();
+
 
 }

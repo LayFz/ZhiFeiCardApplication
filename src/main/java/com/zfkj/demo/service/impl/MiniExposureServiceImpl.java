@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -82,66 +80,6 @@ public class MiniExposureServiceImpl implements MiniExposureService {
         }
         return null;
     }
-
-//    @Override
-//    public HashMap<String, String> sevenTrend() {
-//        UserInfoVO user = systemUserUtil.getLoginUser();
-//        int userId = user.getId().intValue();
-//        Boolean isStaff = miniRoleUtils.isStaff();
-//        if (isStaff){
-//            //今日访客数，近一天访客总数，近两天访客总数。。。
-//            LambdaQueryWrapper<StaffCusVisit> todayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-//                    .eq(StaffCusVisit::getStaffId,userId)
-//                    .apply("DATE_SUB(CURDATE(), INTERVAL 0 DAY) <= date(visit_time)");
-//            LambdaQueryWrapper<StaffCusVisit> onedayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-//                    .eq(StaffCusVisit::getStaffId,userId)
-//                    .apply("DATE_SUB(CURDATE(), INTERVAL 1 DAY) <= date(visit_time)");
-//            LambdaQueryWrapper<StaffCusVisit> twodayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-//                    .eq(StaffCusVisit::getStaffId,userId)
-//                    .apply("DATE_SUB(CURDATE(), INTERVAL 2 DAY) <= date(visit_time)");
-//            LambdaQueryWrapper<StaffCusVisit> threedayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-//                    .eq(StaffCusVisit::getStaffId,userId)
-//                    .apply("DATE_SUB(CURDATE(), INTERVAL 3 DAY) <= date(visit_time)");
-//            LambdaQueryWrapper<StaffCusVisit> fourdayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-//                    .eq(StaffCusVisit::getStaffId,userId)
-//                    .apply("DATE_SUB(CURDATE(), INTERVAL 4 DAY) <= date(visit_time)");
-//            LambdaQueryWrapper<StaffCusVisit> fivedayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-//                    .eq(StaffCusVisit::getStaffId,userId)
-//                    .apply("DATE_SUB(CURDATE(), INTERVAL 5 DAY) <= date(visit_time)");
-//            LambdaQueryWrapper<StaffCusVisit> sixdayLambda = new LambdaQueryWrapper<StaffCusVisit>()
-//                    .eq(StaffCusVisit::getStaffId,userId)
-//                    .apply("DATE_SUB(CURDATE(), INTERVAL 6 DAY) <= date(visit_time)");
-//
-//            long todayNum = staffCusVisitRepository.count(todayLambda);
-//            long onedayNum = staffCusVisitRepository.count(onedayLambda);
-//            long twodayNum = staffCusVisitRepository.count(twodayLambda);
-//            long threedayNum = staffCusVisitRepository.count(threedayLambda);
-//            long fourdayNum = staffCusVisitRepository.count(fourdayLambda);
-//            long fivedayNum = staffCusVisitRepository.count(fivedayLambda);
-//            long sixdayNum = staffCusVisitRepository.count(sixdayLambda);
-//
-//            //计算前一天，前两天访客数，以此类推
-//            long ago_one = onedayNum - todayNum;
-//            long ago_two = twodayNum - onedayNum;
-//            long ago_three = threedayNum - twodayNum;
-//            long ago_four = fourdayNum - threedayNum;
-//            long ago_five = fivedayNum - fourdayNum;
-//            long ago_six = sixdayNum - fivedayNum;
-//
-//            HashMap<String,String> re = new HashMap<>();
-//
-//            re.put("today",String.valueOf(todayNum));
-//            re.put("ago_oneday",String.valueOf(ago_one));
-//            re.put("ago_twoday",String.valueOf(ago_two));
-//            re.put("ago_threeday",String.valueOf(ago_three));
-//            re.put("ago_fourday",String.valueOf(ago_four));
-//            re.put("ago_fiveday",String.valueOf(ago_five));
-//            re.put("ago_sixday",String.valueOf(ago_six));
-//
-//            return  re;
-//        }
-//        return null;
-//    }
 
     @Override
     public HashMap<String, String> cumulativeDate(String startTime, String endTime) {
@@ -498,6 +436,43 @@ public class MiniExposureServiceImpl implements MiniExposureService {
 
             }
             return re;
+        }
+        return null;
+    }
+
+    @Override
+    public HashMap<String, String> todaySituation() {
+        UserInfoVO user = systemUserUtil.getLoginUser();
+        int userId = user.getId().intValue();
+        Boolean isStaff = miniRoleUtils.isStaff();
+        if (isStaff){
+            LambdaQueryWrapper<StaffCusVisit> staffCusVisitLambda = new LambdaQueryWrapper<StaffCusVisit>()
+                    .eq(StaffCusVisit::getStaffId,userId)
+                    .apply("DATE_SUB(CURDATE(), INTERVAL 0 DAY) <= date(visit_time)");
+            LambdaQueryWrapper<StaffCusSave> staffCusSaveLambda = new LambdaQueryWrapper<StaffCusSave>()
+                    .eq(StaffCusSave::getStaffId,userId)
+                    .apply("DATE_SUB(CURDATE(), INTERVAL 0 DAY) <= date(save_time)");
+            LambdaQueryWrapper<StaffCusMail> staffCusMailLambda = new LambdaQueryWrapper<StaffCusMail>()
+                    .eq(StaffCusMail::getStaffId,userId)
+                    .apply("DATE_SUB(CURDATE(), INTERVAL 0 DAY) <= date(mail_time)");
+           LambdaQueryWrapper<TextBoard> textBoardLambda = new LambdaQueryWrapper<TextBoard>()
+                   .eq(TextBoard::getBelongId,userId)
+                   .apply("DATE_SUB(CURDATE(), INTERVAL 0 DAY) <= date(create_time)");
+
+           long visitNum = staffCusVisitRepository.count(staffCusVisitLambda);
+           long saveNum = staffCusSaveRepository.count(staffCusSaveLambda);
+           long mailNum = staffCusMailRepository.count(staffCusMailLambda);
+           long textborad = textBoardRepository.count(textBoardLambda);
+
+           HashMap<String,String> re = new HashMap<>();
+
+           re.put("visitNum",String.valueOf(visitNum));
+           re.put("saveNum",String.valueOf(saveNum));
+           re.put("mailNUm",String.valueOf(mailNum));
+           re.put("textbord",String.valueOf(textborad));
+
+           return re;
+
         }
         return null;
     }

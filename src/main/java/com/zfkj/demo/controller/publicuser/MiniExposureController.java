@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 
-@Api(tags = "MINI -员工管理-曝光统计")
+@Api(tags = "MINI -名片管理-曝光统计")
 @RestController
 @RequestMapping("/api/user/exposure")
 public class MiniExposureController {
@@ -54,5 +54,11 @@ public class MiniExposureController {
     @GetMapping("/miniExposureList")
     public Result<List<MiniExResVo>> miniExposureList(@RequestParam(value = "startTime",required = false)String start, @RequestParam(value = "endTime",required = false)String end){
         return Result.success(miniExposureService.miniExposureList(start,end));
+    }
+
+    @ApiOperation(value = "获取今日情况",notes =ApiTextHelperConstant.DEVELOPER + DeveloperConstant.YUANMIAOMIAO)
+    @GetMapping("/todaySituation")
+    public Result<HashMap<String,String>> todaySituation(){
+        return Result.success(miniExposureService.todaySituation());
     }
 }
