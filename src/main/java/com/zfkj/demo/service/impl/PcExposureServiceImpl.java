@@ -13,13 +13,15 @@ import com.zfkj.demo.vo.respvo.pcexposure.ExpersonResVo;
 import com.zfkj.demo.vo.respvo.pcexposure.PcExResVo;
 import com.zfkj.demo.vo.respvo.user.UserInfoVO;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,8 +98,40 @@ public class PcExposureServiceImpl implements PcExposureService {
                     re.add(pcExResVo);
                 }
                 return re;
+            }else {
+                //现在时间
+                //获取当前日期时间
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                 endMonth = sdf.format(System.currentTimeMillis());
+                //获取四月前的日期
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 3);
+                 startMonth = sdf.format(calendar.getTime());
+
+                List<String> monthList = TimeUtil.getMonth(startMonth,endMonth);
+                List<PcExResVo> re = new ArrayList<>();
+                for (String s : monthList) {
+                    QueryWrapper<StaffCusVisit> staffCusVisitLambda = new QueryWrapper<StaffCusVisit>()
+                            .likeRight(true,"visit_time",s)
+                            .inSql("staff_id",staffIds);
+
+                    long visitNum = staffCusVisitRepository.count(staffCusVisitLambda);
+//                long visitNum = staffCusVisitRepository.getBaseMapper().visitNumByMonth(staffIds, s);
+//                List<StaffCusVisit> staffCusVisits = staffCusVisitRepository.getBaseMapper().visitNum(staffIds,s);
+//                List<StaffCusVisit> staffCusVisits = staffCusVisitRepository.list(staffCusVisitLambda);
+//                System.out.println("staffs:"+staffCusVisits);
+
+                    PcExResVo pcExResVo = PcExResVo.builder().build();
+
+
+                    pcExResVo.setMonthTime(s);
+                    pcExResVo.setVisitNum(Math.toIntExact(visitNum));
+                    System.out.println("pc:" + pcExResVo);
+                    re.add(pcExResVo);
+                }
+                return re;
             }
-            return null;
+
         }
         return null;
     }
@@ -142,8 +176,36 @@ public class PcExposureServiceImpl implements PcExposureService {
                     re.add(pcExResVo);
                 }
                 return re;
+            }else {
+                //现在时间
+                //获取当前日期时间
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                endMonth = sdf.format(System.currentTimeMillis());
+                //获取四月前的日期
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 3);
+                System.out.println("endMonth"+endMonth);
+                startMonth = sdf.format(calendar.getTime());
+                System.out.println("startMonth:"+startMonth);
+                List<String> monthList = TimeUtil.getMonth(startMonth,endMonth);
+                List<PcExResVo> re = new ArrayList<>();
+                for (int i = 0;i<monthList.size();i++){
+                    LambdaQueryWrapper<StaffCusSave> staffCusSaveLambda = new LambdaQueryWrapper<StaffCusSave>()
+                            .inSql(StaffCusSave::getStaffId,staffIds)
+                            .likeRight(true,StaffCusSave::getSaveTime,monthList.get(i));
+
+                    long saveNum = staffCusSaveRepository.count(staffCusSaveLambda);
+                    PcExResVo pcExResVo = PcExResVo.builder().build();
+
+
+                    pcExResVo.setMonthTime(monthList.get(i));
+                    pcExResVo.setCustomerNum(Math.toIntExact(saveNum));
+                    System.out.println("pc:"+pcExResVo);
+                    re.add(pcExResVo);
+                }
+                return re;
+
             }
-            return null;
         }
         return null;
     }
